@@ -13,30 +13,10 @@ import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
 import Table from '@ckeditor/ckeditor5-table/src/table';
 import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
 import Template from '@amazee/ckeditor5-template/src/template';
-import Linkit from '@amazee/ckeditor5-drupal-linkit/src/linkit';
-import DrupalMedia from '@amazee/ckeditor5-drupal-media/src/drupalmedia';
 import BlockToolbar from '@ckeditor/ckeditor5-ui/src/toolbar/block/blocktoolbar';
-import Validation from '@amazee/ckeditor5-template/src/validation';
-import ButtonElement from '@amazee/ckeditor5-drupal-linkit/src/elements/buttonelement';
 import TemplateEditing from '@amazee/ckeditor5-template/src/templateediting';
 import RemoteControl from '@amazee/ckeditor5-template/src/remotecontrol';
-import TabsElement from '@amazee/ckeditor5-template/src/elements/tabselement'
-import GalleryElement from "@amazee/ckeditor5-template/src/elements/galleryelement";
 import MergeEditing from "@amazee/ckeditor5-template/src/mergeediting";
-import TextConstraintElement from "@amazee/ckeditor5-template/src/elements/textconstraintelement";
-
-import Placeholder from '@amazee/editor-components/components/placeholder/placeholder';
-import Media from '@amazee/editor-components/components/media/media';
-import '@amazee/editor-components/components/container/container';
-import '@amazee/editor-components/components/gallery/gallery';
-import '@amazee/editor-components/components/tabs/tabs';
-import '@amazee/editor-components/components/text_conflict/text_conflict';
-import '@amazee/editor-components/components/text_conflict/text_conflict_option/text_conflict_option';
-
-import '@amazee/editor-components/components/textfield/textfield';
-import '@amazee/editor-components/components/button/button';
-import '@amazee/editor-components/components/media_conflict/media_conflict';
-import '@amazee/editor-components/components/media_conflict/media_conflict_option/media_conflict_option';
 
 export default class SectionsEditor extends BalloonEditorBase { }
 
@@ -67,15 +47,8 @@ SectionsEditor.builtinPlugins = [
 	TableToolbar,
 	BlockToolbar,
 	Template,
-	Linkit,
 	TemplateEditing,
-	DrupalMedia,
-	Validation,
-	ButtonElement,
-	TabsElement,
-	GalleryElement,
-	MergeEditing,
-  TextConstraintElement
+	MergeEditing
 ];
 
 // Editor configuration.

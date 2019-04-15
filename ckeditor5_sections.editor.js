@@ -22,14 +22,11 @@
       });
     },
     detach: function (element, format, trigger) {
-      // console.log('detach');
       if (trigger !== 'serialize') {
         editors[element.id].destroy();
       }
     },
     onChange: function (element, callback) {
-      // console.log('change');
-      // editors[element.id].on('change', debounce(callback, 500));
     }
   };
 
