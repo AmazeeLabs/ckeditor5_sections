@@ -11,18 +11,15 @@
 
   Drupal.editors.ckeditor5_sections = {
     attach: function attach(element, format) {
-      var editor = init(element, format.editorSettings);
-      if (editor) {
-        editor.then(editor => {
-          editors[element.id] = editor;
-          editor.model.document.on('change', () => {
-            $(element).val(editor.getData());
-            $(element).attr('data-editor-value-is-changed', 'true');
-          });
-        }).catch(error => {
-          console.error(error.stack);
+      init(element, format).then(editor => {
+        editors[element.id] = editor;
+        editor.model.document.on('change', () => {
+          $(element).val(editor.getData());
+          $(element).attr('data-editor-value-is-changed', 'true');
         });
-      }
+      }).catch(error => {
+        console.error(error.stack);
+      });
     },
     detach: function (element, format, trigger) {
       if (trigger !== 'serialize') {
@@ -38,11 +35,12 @@
    *
    * @param element
    *   The target input element.
-   * @param editorSettings
-   *   Editor settings.
+   * @param format
+   *   Text format settings.
    * @returns {editor}
    */
-  function init(element, editorSettings) {
+  function init(element, format) {
+    var editorSettings = format.editorSettings;
     $(element).hide();
 
     var editor = document.createElement('div');
@@ -98,20 +96,24 @@
         currentCallback = null;
       };
 
+      var typeFilter = '';
+      var selectedType = '';
+
       if (type === 'media') {
-        var path = (operation === 'add') ? '/admin/content/media-widget-upload' : '/admin/content/media-widget';
+        var path = (operation === 'add') ? '/sections/dialog?upload_form=1' : '/sections/dialog?upload_form=0';
 
         // Filter allowed media types.
-        var typeFilter = '';
         if (typeof bundle != 'undefined') {
-          var types = bundle.split(' ');
-          types.forEach((item) => {
+          bundle.split(' ').forEach((item) => {
+            if (!selectedType) {
+              selectedType = item;
+            }
             typeFilter += '&media_library_allowed_types[' + item + ']=' + item;
           });
         }
 
         Drupal.ajax({
-          url: path + '?media_library_widget_id=' + $(element).attr('id') + typeFilter + '&media_library_remaining=1&return_type=uuid',
+          url: path + '&field_id=' + $(element).attr('id') + typeFilter + '&return_type=uuid&media_library_selected_type=' + selectedType + '&media_library_remaining=1',
           dialogType: 'modal',
           dialog: {
             dialogClass: 'media-library-widget-modal',
@@ -124,16 +126,17 @@
       else {
 
         // Filter allowed node types.
-        var typeFilter = '';
         if (typeof bundle != 'undefined') {
-          var types = bundle.split(' ');
-          types.forEach((item) => {
+          bundle.split(' ').forEach((item) => {
+            if (!selectedType) {
+              selectedType = item;
+            }
             typeFilter += '&content_library_allowed_types[' + item + ']=' + item;
           });
         }
 
         Drupal.ajax({
-          url: Drupal.url('admin/content/content-widget?media_library_widget_id=' + $(element).attr('id') + typeFilter + '&return_type=uuid' ),
+          url: Drupal.url('admin/content/content-widget?content_library_widget_id=' + $(element).attr('id') + typeFilter + '&return_type=uuid&media_library_selected_type=' + selectedType + '&media_library_remaining=1' ),
           dialogType: 'modal',
           dialog: {
             dialogClass: 'media-library-widget-modal',
@@ -193,7 +196,7 @@
         dialog: dialogSettings,
         dialogType: 'modal',
         selector: '.ckeditor-dialog-loading-link',
-        url:  Drupal.url('editor/dialog/link/ckeditor5_sections'),
+        url:  Drupal.url('editor/dialog/link/' + format.format),
         progress: { type: 'throbber' },
         submit: {
           editor_object: {

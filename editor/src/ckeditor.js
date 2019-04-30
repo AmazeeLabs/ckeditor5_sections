@@ -6,6 +6,8 @@ import Autoformat from '@ckeditor/ckeditor5-autoformat/src/autoformat';
 import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold';
 import Link from "@ckeditor/ckeditor5-link/src/link";
 import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
+import Subscript from '@ckeditor/ckeditor5-basic-styles/src/subscript';
+import Superscript from '@ckeditor/ckeditor5-basic-styles/src/superscript';
 import Underline from '@ckeditor/ckeditor5-basic-styles/src/underline';
 import BlockQuote from '@ckeditor/ckeditor5-block-quote/src/blockquote';
 import Heading from '@ckeditor/ckeditor5-heading/src/heading';
@@ -15,6 +17,7 @@ import Table from '@ckeditor/ckeditor5-table/src/table';
 import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
 import Template from '@amazee/ckeditor5-template/src/template';
 import BlockToolbar from '@ckeditor/ckeditor5-ui/src/toolbar/block/blocktoolbar';
+import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefromoffice';
 
 import TemplateEditing from '@amazee/ckeditor5-template/src/templateediting';
 import RemoteControl from '@amazee/ckeditor5-template/src/remotecontrol';
@@ -26,9 +29,13 @@ export default class SectionsEditor extends BalloonEditorBase { }
 SectionsEditor.builtinPlugins = [
 	RemoteControl,
 	Essentials,
+	PasteFromOffice,
 	Autoformat,
 	Bold,
 	Italic,
+	Subscript,
+	Superscript,
+	Underline,
 	BlockQuote,
 	Heading,
 	List,
@@ -40,7 +47,6 @@ SectionsEditor.builtinPlugins = [
 	TemplateEditing,
 	MergeEditing,
   Link,
-  Underline
 ];
 
 // Editor configuration.
@@ -51,6 +57,8 @@ SectionsEditor.defaultConfig = {
 			'italic',
 			'link',
 			'underline',
+      'superscript',
+      'subscript',
 			'bulletedList',
 			'numberedList',
 			'blockQuote',

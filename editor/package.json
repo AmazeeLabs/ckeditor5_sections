@@ -51,6 +51,7 @@
   "dependencies": {
     "@amazee/ckeditor5-template": "https://github.com/AmazeeLabs/ckeditor5-template#the-great-clean-up",
     "@amazee/editor-components": "https://github.com/AmazeeLabs/editor-components",
+    "@ckeditor/ckeditor5-paste-from-office": "ckeditor/ckeditor5-paste-from-office#2fa62c77f4d4f4c2d3e9bdc7b421cc66104d6967",
     "@ckeditor/ckeditor5-autoformat": "10.0.4",
     "@ckeditor/ckeditor5-basic-styles": "10.1.0",
     "@ckeditor/ckeditor5-block-quote": "10.1.1",

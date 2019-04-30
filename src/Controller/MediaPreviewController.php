@@ -5,7 +5,6 @@ namespace Drupal\ckeditor5_sections\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,7 +24,7 @@ class MediaPreviewController extends ControllerBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static ($container->get('renderer'), $container->get('entity.repository'));
+    return new static($container->get('renderer'), $container->get('entity.repository'));
   }
 
   /**

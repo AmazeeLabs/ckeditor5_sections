@@ -15,6 +15,7 @@ use Drupal\editor\Plugin\EditorBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\editor\Entity\Editor;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\media_library\MediaLibraryState;
 
 // TODO: Apply linkit conditionally.
 
@@ -283,7 +284,8 @@ class CKEditor5Sections extends EditorBase implements ContainerFactoryPluginInte
    * {@inheritdoc}
    */
   public function getLibraries(Editor $editor) {
-    return ['ckeditor5_sections/editor'];
+    $settings = $editor->getSettings();
+    return ['ckeditor5_sections/editor', $settings['editorBuild']];
   }
 
   /**
@@ -312,7 +314,7 @@ class CKEditor5Sections extends EditorBase implements ContainerFactoryPluginInte
 
     $settings['templates'] = $sections;
     $settings['templateAttributes'] = $templateAttributes;
-    $settings['templateSession'] = implode(':', [session_id(), time(), static::$instances++ ]);
+    $settings['templateSession'] = implode(':', [session_id(), time(), static::$instances++]);
     $settings['enabled_drupal_modules'] = array_keys($moduleHandler->getModuleList());
 
     $moduleHandler->alter('ckeditor5_sections_editor_settings', $settings);

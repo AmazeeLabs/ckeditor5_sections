@@ -7,6 +7,7 @@
 
 use Drupal\ckeditor5_sections\Field\TextLongWithSectionsItem;
 use Drupal\ckeditor5_sections\Field\TextWithSummaryAndSectionsItem;
+use Drupal\ckeditor5_sections\Form\SectionsMediaLibraryUploadForm;
 
 /**
  * Implements hook_views_data_alter().
@@ -33,4 +34,14 @@ function ckeditor5_sections_field_info_alter(&$info) {
       $info[$field_type]['class'] = $class_name;
     }
   }
+}
+
+/**
+ * Implements hook_media_source_info_alter().
+ */
+function ckeditor5_sections_media_source_info_alter(array &$sources) {
+  $sources['audio_file']['forms']['media_library_add'] = SectionsMediaLibraryUploadForm::class;
+  $sources['file']['forms']['media_library_add'] = SectionsMediaLibraryUploadForm::class;
+  $sources['image']['forms']['media_library_add'] = SectionsMediaLibraryUploadForm::class;
+  $sources['video_file']['forms']['media_library_add'] = SectionsMediaLibraryUploadForm::class;
 }

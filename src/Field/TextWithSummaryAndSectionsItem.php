@@ -18,6 +18,7 @@ class TextWithSummaryAndSectionsItem extends TextWithSummaryItem {
       ->setComputed(TRUE)
       ->setClass(DocumentSectionsExtractor::class)
       ->setSetting('text source', 'value')
+      ->setDataType('section')
       ->setInternal(FALSE);
 
     return $properties;

@@ -12,6 +12,13 @@ ckeditor5_sections.media.preview:
     # TODO: proper access handling
     _permission: 'access content'
 
+ckeditor5_sections.media.open_dialog:
+  path: '/sections/dialog'
+  defaults:
+    _controller: '\Drupal\ckeditor5_sections\Controller\MediaDialogController::openDialog'
+  requirements:
+    _permission: 'access content'
+
 ckeditor5_sections.content.preview:
   path: '/sections/content-preview/{uuid}/{display}'
   defaults:
