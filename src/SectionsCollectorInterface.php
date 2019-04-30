@@ -10,7 +10,9 @@ interface SectionsCollectorInterface {
   /**
    * Returns a list of all available sections.
    *
+   * @param null $directory
+   *
    * @return array
    */
-  public function getSections();
+  public function getSections($directory = NULL);
 }

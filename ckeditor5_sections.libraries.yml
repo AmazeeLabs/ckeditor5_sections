@@ -1,6 +1,13 @@
+editor_components:
+  js:
+    editor/build/components.js: { preprocess: false }
+
 editor_build:
   js:
     editor/build/ckeditor.js: { preprocess: false }
+  dependencies:
+    - ckeditor5_sections/editor_components
+    - smart_editor/editor_components
 
 editor:
   js:

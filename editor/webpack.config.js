@@ -17,13 +17,16 @@ module.exports = {
 	devtool: 'source-map',
 	performance: { hints: false },
 
-	entry: path.resolve( __dirname, 'src', 'ckeditor.js' ),
+	entry: {
+		ckeditor: path.resolve( __dirname, 'src', 'ckeditor.js' ),
+		components: path.resolve( __dirname, 'src', 'components.js' )
+	},
 
 	output: {
 		// The name under which the editor will be exported.
 		library: 'SectionsEditor',
 		path: path.resolve( __dirname, 'build' ),
-		filename: 'ckeditor.js',
+		filename: '[name].js',
 		libraryTarget: 'umd',
 		libraryExport: 'default'
 	},
