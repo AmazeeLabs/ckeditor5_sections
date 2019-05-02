@@ -7,7 +7,6 @@ editor_build:
     editor/build/ckeditor.js: { preprocess: false }
   dependencies:
     - ckeditor5_sections/editor_components
-    - smart_editor/editor_components
 
 editor:
   js:

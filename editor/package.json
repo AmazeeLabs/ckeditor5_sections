@@ -49,7 +49,7 @@
     "preversion": "npm run build; if [ -n \"$(git status src/ckeditor.js build/ --porcelain)\" ]; then git add -u src/ckeditor.js build/ && git commit -m 'Internal: Build.'; fi"
   },
   "dependencies": {
-    "@amazee/ckeditor5-template": "https://github.com/AmazeeLabs/ckeditor5-template#the-great-clean-up",
+    "@amazee/ckeditor5-template": "https://github.com/AmazeeLabs/ckeditor5-template",
     "@amazee/editor-components": "https://github.com/AmazeeLabs/editor-components",
     "@ckeditor/ckeditor5-autoformat": "10.0.4",
     "@ckeditor/ckeditor5-basic-styles": "10.1.0",
