@@ -44,6 +44,7 @@
     $(element).hide();
 
     var editor = document.createElement('div');
+    editor.classList.add('ck-editor');
     $(editor).insertAfter(element);
     editor.innerHTML = $(element).val();
 

@@ -184,7 +184,7 @@ class CKEditor5Sections extends EditorBase implements ContainerFactoryPluginInte
       ],
     ];
 
-    $sections = $this->sectionsCollector->getSections($settings['templateDirectory']);
+    $sections = $this->sectionsCollector->getSections($form_state->getValue(['editor', 'settings', 'templateDirectory'], $settings['templateDirectory']));
     $form['rootElement'] = [
       '#prefix' => '<div id="ckeditor5-sections-template-list">',
       '#suffix' => '</div>',

@@ -309,9 +309,8 @@ class EditorElement extends lit_element__WEBPACK_IMPORTED_MODULE_0__["LitElement
    * @inheritDoc
    */
   connectedCallback() {
+    this.inEditor = !!this.closest(".ck-editor");
     super.connectedCallback();
-    // TODO: Properly detect when not in an editor instance.
-    this.inEditor = true;
   }
 
   /**
@@ -919,7 +918,8 @@ class Gallery extends _base_editor_element_editor_element__WEBPACK_IMPORTED_MODU
           <div class="ck-gallery__pager">
             <div class="ck-gallery__dots">
               ${this.items.map(item => this.button(item))}
-              ${this.numberOfChildren < this.maxItems || this.maxItems === 0
+              ${this.inEditor &&
+              (this.numberOfChildren < this.maxItems || this.maxItems === 0)
                 ? lit_element__WEBPACK_IMPORTED_MODULE_0__["html"]`
                     <span
                       @click="${() => this.addItem()}"
@@ -934,43 +934,48 @@ class Gallery extends _base_editor_element_editor_element__WEBPACK_IMPORTED_MODU
                 : null}
             </div>
           </div>
-          <div class="ck-gallery__actions">
-            <span>Edit active element</span>
-            <div class="ck-gallery__icons">
-              <div
-                @click="${() => this.moveItem("left")}"
-                data-tooltip="Move element to the left"
-                class="ck-gallery__icon ck-gallery__icon--arrow-left ${this
-                  .currentItem === 0 || this.currentItem === this.items.length
-                  ? "disabled"
-                  : ""}"
-              >
-                ${Object(lit_element__WEBPACK_IMPORTED_MODULE_0__["svg"])([_raw_loader_icons_leftArrow_svg__WEBPACK_IMPORTED_MODULE_2___default.a])}
-              </div>
-              <div
-                @click="${() => this.moveItem("right")}"
-                data-tooltip="Move element to the right"
-                class="ck-gallery__icon ck-gallery__icon--arrow-right ${this
-                  .currentItem >=
-                this.items.length - 1
-                  ? "disabled"
-                  : ""}"
-              >
-                ${Object(lit_element__WEBPACK_IMPORTED_MODULE_0__["svg"])([_raw_loader_icons_rightArrow_svg__WEBPACK_IMPORTED_MODULE_3___default.a])}
-              </div>
-              <div
-                @click="${() => this.deleteItem()}"
-                data-tooltip="Delete slide"
-                class="ck-gallery__icon ck-gallery__icon--arrow-trash ${this
-                  .items.length === 0 ||
-                this.currentItem === this.numberOfChildren
-                  ? "disabled"
-                  : ""}"
-              >
-                ${Object(lit_element__WEBPACK_IMPORTED_MODULE_0__["svg"])([_raw_loader_icons_trash_svg__WEBPACK_IMPORTED_MODULE_4___default.a])}
-              </div>
-            </div>
-          </div>
+          ${this.inEditor
+            ? lit_element__WEBPACK_IMPORTED_MODULE_0__["html"]`
+                <div class="ck-gallery__actions">
+                  <span>Edit active element</span>
+                  <div class="ck-gallery__icons">
+                    <div
+                      @click="${() => this.moveItem("left")}"
+                      data-tooltip="Move element to the left"
+                      class="ck-gallery__icon ck-gallery__icon--arrow-left ${this
+                        .currentItem === 0 ||
+                      this.currentItem === this.items.length
+                        ? "disabled"
+                        : ""}"
+                    >
+                      ${Object(lit_element__WEBPACK_IMPORTED_MODULE_0__["svg"])([_raw_loader_icons_leftArrow_svg__WEBPACK_IMPORTED_MODULE_2___default.a])}
+                    </div>
+                    <div
+                      @click="${() => this.moveItem("right")}"
+                      data-tooltip="Move element to the right"
+                      class="ck-gallery__icon ck-gallery__icon--arrow-right ${this
+                        .currentItem >=
+                      this.items.length - 1
+                        ? "disabled"
+                        : ""}"
+                    >
+                      ${Object(lit_element__WEBPACK_IMPORTED_MODULE_0__["svg"])([_raw_loader_icons_rightArrow_svg__WEBPACK_IMPORTED_MODULE_3___default.a])}
+                    </div>
+                    <div
+                      @click="${() => this.deleteItem()}"
+                      data-tooltip="Delete slide"
+                      class="ck-gallery__icon ck-gallery__icon--arrow-trash ${this
+                        .items.length === 0 ||
+                      this.currentItem === this.numberOfChildren
+                        ? "disabled"
+                        : ""}"
+                    >
+                      ${Object(lit_element__WEBPACK_IMPORTED_MODULE_0__["svg"])([_raw_loader_icons_trash_svg__WEBPACK_IMPORTED_MODULE_4___default.a])}
+                    </div>
+                  </div>
+                </div>
+              `
+            : null}
         </div>
       </div>
     `;
@@ -2089,10 +2094,14 @@ class Tabs extends _base_editor_element_editor_element__WEBPACK_IMPORTED_MODULE_
         <div class="ck-tabs__header">
           <ul class="ck-tabs__header-tab-list">
             ${this.items.map(item => this.tabTitle(item))}
-            <li
-              @click="${() => this.addItem()}"
-              class="ck-tabs__header-tab-add"
-            ></li>
+            ${this.inEditor
+              ? lit_element__WEBPACK_IMPORTED_MODULE_0__["html"]`
+                  <li
+                    @click="${() => this.addItem()}"
+                    class="ck-tabs__header-tab-add"
+                  ></li>
+                `
+              : null}
           </ul>
         </div>
         <div class="ck-tabs__content">
@@ -2121,12 +2130,16 @@ class Tabs extends _base_editor_element_editor_element__WEBPACK_IMPORTED_MODULE_
         ${item.default === "true" ? "default" : ""}"
       >
         ${item.title}
-        <span
-          @click="${() => this.openModal(item)}"
-          class="ck-tabs__header-icon"
-        >
-          ${Object(lit_element__WEBPACK_IMPORTED_MODULE_0__["svg"])([_icons_pencil_svg__WEBPACK_IMPORTED_MODULE_4___default.a])}
-        </span>
+        ${this.inEditor
+          ? lit_element__WEBPACK_IMPORTED_MODULE_0__["html"]`
+              <span
+                @click="${() => this.openModal(item)}"
+                class="ck-tabs__header-icon"
+              >
+                ${Object(lit_element__WEBPACK_IMPORTED_MODULE_0__["svg"])([_icons_pencil_svg__WEBPACK_IMPORTED_MODULE_4___default.a])}
+              </span>
+            `
+          : null}
       </li>
     `;
   }

@@ -43,6 +43,7 @@ class SectionsCollector implements SectionsCollectorInterface {
       /** @var Editor[] $editors */
       $editors = $storage->loadByProperties([
         'editor' => 'ckeditor5_sections',
+        'status' => TRUE
       ]);
 
       /** @var \Drupal\ckeditor5_sections\SectionsCollectorInterface $collector */
