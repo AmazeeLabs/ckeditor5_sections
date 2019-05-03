@@ -22,6 +22,22 @@ function ckeditor5_sections_views_data_alter(&$data) {
 }
 
 /**
+ * Implements hook_module_implements_alter().
+ */
+function ckeditor5_sections_module_implements_alter(&$implementations, $hook) {
+  switch ($hook) {
+    case 'media_source_info_alter':
+      $group = $implementations['ckeditor5_sections'];
+      unset($implementations['ckeditor5_sections']);
+      $implementations['ckeditor5_sections'] = $group;
+      break;
+
+    default:
+      break;
+  }
+}
+
+/**
  * Implements hook_field_info_alter().
  */
 function ckeditor5_sections_field_info_alter(&$info) {
