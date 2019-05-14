@@ -2,12 +2,15 @@
 
 namespace Drupal\ckeditor5_sections;
 
+use Drupal\Core\Config\ConfigEvents;
+use Drupal\Core\Config\ConfigImporterEvent;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Sections collector service class.
  */
-class SectionsCollector implements SectionsCollectorInterface {
+class SectionsCollector implements SectionsCollectorInterface, EventSubscriberInterface {
 
   /**
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
@@ -71,6 +74,32 @@ class SectionsCollector implements SectionsCollectorInterface {
       ];
     }
     return $sections;
+  }
+
+  /**
+   * Fires after the configuration import.
+   *
+   * @param \Drupal\Core\Config\ConfigImporterEvent $event
+   */
+  public function afterConfigImport(ConfigImporterEvent $event) {
+    foreach ($event->getChangelist() as $list) {
+      foreach ($list as $item) {
+        if (strpos($item, 'editor.editor.') === 0) {
+          // Clear sections cache if there are changes in the editor config.
+          $this->sections = NULL;
+          break 2;
+        }
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getSubscribedEvents() {
+    $events = [];
+    $events[ConfigEvents::IMPORT][] = ['afterConfigImport'];
+    return $events;
   }
 
 }
