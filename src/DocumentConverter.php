@@ -357,6 +357,13 @@ class DocumentConverter implements DocumentConverterInterface {
             // If the field is just a simple (scalar) field, then we just dump
             // the entire html of the node in it for now.
             $item_field_data = $this->getDOMInnerHtml($node);
+            if (trim($item_field_data, " \t\n\r\0\x0B\xC2\xA0") === '') {
+              // CKEditor and friends sometimes use the non-breaking space
+              // character in empty elements for various reasons. Treat such
+              // cases as empty strings, so that the user code can perform the
+              // is-empty checks in an easy way.
+              $item_field_data = '';
+            }
           }
 
           // If we are in the context of a parent, then just set the item data
