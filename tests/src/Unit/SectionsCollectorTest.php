@@ -4,7 +4,7 @@ namespace {
 
   // Mock a global function.
   function file_scan_directory($dir) {
-    $path = getcwd() . '/web/modules/contrib/ckeditor5_sections/tests/src/Unit/data/';
+    $path = getcwd() . '/web/modules/contrib/ckeditor5_sections/tests/src/Unit/assets/data/';
     return [
       $path . 'test1.yml' =>
         (object) [
