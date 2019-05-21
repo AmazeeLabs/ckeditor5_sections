@@ -98,17 +98,14 @@ class SectionsCollector implements SectionsCollectorInterface, EventSubscriberIn
     foreach ($files as $file => $file_info) {
       $info = Yaml::parseFile($file);
       $filename = dirname($file_info->uri) . '/' . $file_info->name;
+      // If the template is a Twig file, process the Twig placeholders etc.
       if (file_exists($filename . '.html.twig')) {
         $file_path = $filename . '.html.twig';
-        $is_twig = TRUE;
+        $template = $this->twigProcessor->processTwigTemplate($file_path);
       }
       else {
         $file_path = $filename . '.html';
-        $is_twig = FALSE;
-      }
-      $template = file_get_contents($file_path);
-      if ($is_twig) {
-        $template = $this->twigProcessor->processTwigTemplate($template);
+        $template = file_get_contents($file_path);
       }
       $sections[$file_info->name] = [
         'label' => array_key_exists('label', $info) ? $info['label'] : $file_info->name,
