@@ -3,8 +3,8 @@
 namespace Drupal\ckeditor5_sections;
 
 use Drupal\ckeditor5_sections\Event\ProcessTwigEvent;
+use Drupal\Core\Template\TwigEnvironment;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Twig\Extension\ExtensionInterface;
 
 /**
  * Class TwigProcessor
@@ -14,9 +14,9 @@ use Twig\Extension\ExtensionInterface;
 class TwigProcessor {
 
   /**
-   * @var \Twig\Extension\ExtensionInterface
+   * @var \Drupal\Core\Template\TwigEnvironment
    */
-  protected $twigExtension;
+  protected $twigEnvironment;
 
   /**
    * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
@@ -26,11 +26,11 @@ class TwigProcessor {
   /**
    * TwigProcessor constructor.
    *
-   * @param \Twig\Extension\ExtensionInterface $twig_extension
+   * @param \Drupal\Core\Template\TwigEnvironment $twig_environment
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    */
-  public function __construct(ExtensionInterface $twig_extension, EventDispatcherInterface $event_dispatcher) {
-    $this->twigExtension = $twig_extension;
+  public function __construct(TwigEnvironment $twig_environment, EventDispatcherInterface $event_dispatcher) {
+    $this->twigEnvironment = $twig_environment;
     $this->eventDispatcher = $event_dispatcher;
   }
 
@@ -40,6 +40,9 @@ class TwigProcessor {
    * @param string $twig_markup
    *
    * @return string
+   * @throws \Twig\Error\LoaderError
+   * @throws \Twig\Error\RuntimeError
+   * @throws \Twig\Error\SyntaxError
    */
   public function processTwigTemplate($twig_markup) {
     // Preprocess.
@@ -47,7 +50,8 @@ class TwigProcessor {
     $this->eventDispatcher->dispatch(ProcessTwigEvent::PREPROCESS, $event);
     $twig_markup = $event->getTwigMarkup();
     // Process.
-    $twig_markup = $this->twigExtension->renderVar($twig_markup);
+    $template = $this->twigEnvironment->load($twig_markup);
+    $twig_markup = $template->render();
     // Post process.
     $event = new ProcessTwigEvent($twig_markup);
     $this->eventDispatcher->dispatch(ProcessTwigEvent::POSTPROCESS, $event);

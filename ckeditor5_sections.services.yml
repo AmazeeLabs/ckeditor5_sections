@@ -23,4 +23,4 @@ services:
     parent: default_plugin_manager
   ckeditor5_sections.twig_processor:
     class: Drupal\ckeditor5_sections\TwigProcessor
-    arguments: ['@twig.extension', '@event_dispatcher']
+    arguments: ['@twig', '@event_dispatcher']
