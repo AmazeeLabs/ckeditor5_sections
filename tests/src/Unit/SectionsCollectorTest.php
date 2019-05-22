@@ -2,23 +2,27 @@
 
 namespace {
 
-  // Mock a global function.
-  function file_scan_directory($dir) {
-    $path = getcwd() . '/web/modules/contrib/ckeditor5_sections/tests/src/Unit/assets/data/';
-    return [
-      $path . 'test1.yml' =>
-        (object) [
-          'uri' => $path . 'test1.yml',
-          'filename' => 'test1.yml',
-          'name' => 'test1',
-        ],
-      $path . 'test2.yml' =>
-        (object) [
-          'uri' => $path . 'test2.yml',
-          'filename' => 'test2.yml',
-          'name' => 'test2',
-        ],
-    ];
+  if (!function_exists('file_scan_directory')) {
+
+    // Mock a global function.
+    function file_scan_directory($dir) {
+      $path = __DIR__ . '/assets/data/';
+      return [
+        $path . 'test1.yml' =>
+          (object) [
+            'uri' => $path . 'test1.yml',
+            'filename' => 'test1.yml',
+            'name' => 'test1',
+          ],
+        $path . 'test2.yml' =>
+          (object) [
+            'uri' => $path . 'test2.yml',
+            'filename' => 'test2.yml',
+            'name' => 'test2',
+          ],
+      ];
+    }
+
   }
 
 }
