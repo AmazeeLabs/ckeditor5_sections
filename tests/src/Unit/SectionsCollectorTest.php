@@ -32,6 +32,7 @@ namespace Drupal\Tests\ckeditor5_sections\Unit {
    * Class SectionsCollectorTest
    *
    * @package Drupal\Tests\ckeditor5_sections\Unit
+   * @group ckeditor5_sections
    */
   class SectionsCollectorTest extends UnitTestCase {
 
@@ -54,8 +55,8 @@ namespace Drupal\Tests\ckeditor5_sections\Unit {
     /**
      * @test
      *
-     * @covers SectionsCollector::getSections()
-     * @covers SectionsCollector::collectSectionsFromDirectory()
+     * @covers \Drupal\ckeditor5_sections\SectionsCollector::getSections
+     * @covers \Drupal\ckeditor5_sections\SectionsCollector::collectSectionsFromDirectory
      */
     public function testGetSections() {
       $this->twigProcessor->method('processTwigTemplate')->willReturn('TRANSLATED TEMPLATE!');
