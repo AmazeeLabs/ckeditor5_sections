@@ -180,7 +180,7 @@
 
     editor.addEventListener('ck-editor:select-link', function (event) {
       currentCallback = function (response) {
-        event.respond(response.href);
+        event.respond(response);
         currentCallback = null;
       };
 
@@ -189,9 +189,12 @@
         dialogClass: 'editor-link-dialog'
       };
 
-      if (event.detail.target) {
-        event.detail.target = event.detail.target.split('#')[0];
+      var editorObject = event.detail;
+      if (editorObject['link-target']) {
+        editorObject['link-target'] = editorObject['link-target'].split('#')[0];
       }
+
+      editorObject['href'] = editorObject['link-target'];
 
       var classes = dialogSettings.dialogClass ? dialogSettings.dialogClass.split(' ') : [];
       dialogSettings.dialogClass = classes.join(' ');
@@ -205,9 +208,7 @@
         url:  Drupal.url('editor/dialog/link/' + format.format),
         progress: { type: 'throbber' },
         submit: {
-          editor_object: {
-            href: event.detail.target
-          }
+          editor_object: editorObject
         }
       });
       AjaxDialog.execute();

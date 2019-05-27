@@ -5,6 +5,7 @@ editor_components:
 editor_build:
   js:
     editor/build/ckeditor.js: { preprocess: false }
+    editor/build/translations/en.js: { preprocess: false }
   dependencies:
     - ckeditor5_sections/editor_components
 
