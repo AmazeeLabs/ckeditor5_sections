@@ -14,7 +14,8 @@
           "data-media-uuid": "",
           "itemprop": "image",
           "itemtype": "teaser-image",
-          "class": "teaser__image"
+          "class": "teaser__image",
+          "entity": "entity:media"
         }
       },
       "headline": {
@@ -61,6 +62,10 @@
       "data-media-uuid": {
         "label": "data-media-uuid",
         "type": "string"
+      },
+      "entity": {
+        "label": "Some label",
+        "type": "entity:media"
       }
     },
     "attributes": {

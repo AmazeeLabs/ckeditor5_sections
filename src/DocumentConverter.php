@@ -261,11 +261,17 @@ class DocumentConverter implements DocumentConverterInterface {
             $internalAttributes[$attributeName] = $attribute->nodeValue;
             continue;
           }
-
           // Add the attribute as a string field.
           $result[$type]['fields'][$attributeName] = [
             'label' => $attributeName,
             'type' => 'string',
+          ];
+        }
+        if (array_key_exists('data-media-type', $result[$type]['fields'])) {
+          $entity_type_id = @explode(':', trim($node->getAttribute('data-media-type')))[0];
+          $result[$type]['fields']['entity'] = [
+            'type' => 'entity:' . $entity_type_id,
+            'label' => $$entity_type_id . ' Entity',
           ];
         }
         $result[$type]['attributes'] = $internalAttributes;
@@ -273,30 +279,33 @@ class DocumentConverter implements DocumentConverterInterface {
       // If the element has an item prop, then we actually have to add it to its
       // parent (if any).
       if ($node->hasAttribute('itemprop') && !empty($parentType)) {
+        $attributes = [];
         // The type of the field depends actually on the itemtype property. If
         // there is an itemtype, it will just be used as the type, otherwise
         // the type will be 'string'.
         $itemtype = $node->hasAttribute('itemtype') ? 'section:' . $node->getAttribute('itemtype') : 'string';
-          // Also support entities.
+        $fieldName = $node->getAttribute('itemprop');
+
+        // Also support entities. Add a field 'entity'.
         if (
           $node->hasAttribute('data-media-uuid') &&
           $node->hasAttribute('data-media-type') &&
           ($entity_type_id = @explode(':', trim($node->getAttribute('data-media-type')))[0])
         ) {
-          $itemtype ='entity:' . $entity_type_id;
+          $attributes['entity'] = 'entity:' . $entity_type_id;
         }
 
         if ($node->hasAttribute('ck-contains')) {
           $itemtype = 'section';
         }
-        $fieldName = $node->getAttribute('itemprop');
         $result[$parentType]['fields'][$fieldName] = [
           'label' => $fieldName,
           'type' => $itemtype,
-          'attributes' => array_map(function(\DOMNode $attribute) {
+          'attributes' => array_merge(array_map(function(\DOMNode $attribute) {
               return $attribute->nodeValue;
-            }, iterator_to_array($node->attributes)),
+            }, iterator_to_array($node->attributes)), $attributes),
         ];
+
         if ($node->hasAttribute('ck-contains')) {
           $result[$parentType]['fields'][$fieldName]['cardinality'] = 'multiple';
         }
@@ -373,12 +382,32 @@ class DocumentConverter implements DocumentConverterInterface {
           if ($item_field_definition instanceof DocumentSectionDataDefinition) {
             $item_field_data = new DocumentSection($value['item_type']);
             // Add all the attributes.
+            $entityType = '';
             foreach ($node->attributes as $attribute) {
               $attributeName = $attribute->nodeName;
               // Add the attribute to the current value.
               if ($item_field_definition->getPropertyDefinition($attributeName)) {
                 $item_field_data->set($attributeName, $node->getAttribute($attribute->nodeName));
               }
+              if ($attributeName == 'data-media-type') {
+                $entityType = $node->getAttribute($attribute->nodeName);
+              }
+            }
+
+            if ($item_field_definition->getPropertyDefinition('entity')) {
+              $entity_type_id = @explode(':', trim($entityType))[0];
+              try {
+                $entities = $this->entityTypeManager
+                  ->getStorage($entity_type_id)
+                  ->loadByProperties([
+                    'uuid' => $node->getAttribute('data-media-uuid'),
+                  ]);
+                $entity = reset($entities);
+              }
+              catch (\Exception $e) {
+                $entity = NULL;
+              }
+              $item_field_data->set('entity', $entity);
             }
             $new_parent = $item_field_data;
           }

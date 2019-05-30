@@ -24,7 +24,7 @@ class CKEditor5SectionsMedia extends TextFieldEmbedBase {
     $dom = Html::load($text);
     $xpath = new \DOMXPath($dom);
     $entities = [];
-    foreach ($xpath->query('//div[@data-media-uuid]') as $node) {
+    foreach ($xpath->query('//ck-media[@data-media-uuid]') as $node) {
       $entities[$node->getAttribute('data-media-uuid')] = 'media';
     }
     return $entities;

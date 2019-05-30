@@ -13,6 +13,7 @@ class DocumentConverterTest extends KernelTestBase {
   public static $modules = [
     'ckeditor5_sections',
     'editor',
+    'media',
     'filter',
     'serialization'
   ];
