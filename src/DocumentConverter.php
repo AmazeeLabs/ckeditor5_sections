@@ -271,7 +271,7 @@ class DocumentConverter implements DocumentConverterInterface {
           $entity_type_id = @explode(':', trim($node->getAttribute('data-media-type')))[0];
           $result[$type]['fields']['entity'] = [
             'type' => 'entity:' . $entity_type_id,
-            'label' => $$entity_type_id . ' Entity',
+            'label' => $entity_type_id . ' Entity',
           ];
         }
         $result[$type]['attributes'] = $internalAttributes;

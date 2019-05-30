@@ -64,7 +64,7 @@
         "type": "string"
       },
       "entity": {
-        "label": "Some label",
+        "label": "media Entity",
         "type": "entity:media"
       }
     },
