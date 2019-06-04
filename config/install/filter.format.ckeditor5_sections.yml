@@ -3,7 +3,7 @@ status: true
 dependencies:
   module:
     - ckeditor5_sections
-name: 'CKEditor5 Sections'
+name: 'Sections'
 format: ckeditor5_sections
 weight: -8
 filters:

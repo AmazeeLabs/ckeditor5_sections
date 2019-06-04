@@ -2,6 +2,7 @@
 
 namespace Drupal\ckeditor5_sections\Plugin\Editor;
 
+use Drupal;
 use Drupal\ckeditor5_sections\SectionsCollectorInterface;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Utility\NestedArray;
@@ -159,6 +160,7 @@ class CKEditor5Sections extends EditorBase implements ContainerFactoryPluginInte
           'linkit_profile' => 'default',
         ]
       ],
+      'advanced' => '{}'
     ];
   }
 
@@ -271,7 +273,25 @@ class CKEditor5Sections extends EditorBase implements ContainerFactoryPluginInte
       ];
     }
 
+    $form['advanced'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Advanced configuration'),
+      '#description' => $this->t('JSON configuration object that will be passed to the editor instance. See: <a href="https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/configuration.html">CKEditor5 Documentation</a>'),
+      '#default_value' => $settings['advanced'],
+    ];
+
     return $form;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function settingsFormValidate(array $form, FormStateInterface $form_state) {
+    parent::settingsFormValidate($form, $form_state);
+    $advanced = $form_state->getValue(['editor', 'settings', 'advanced']);
+    if(is_null(json_decode($advanced))) {
+      $form_state->setErrorByName('editor][settings][advanced', $this->t('Advanced configuration is not valid JSON.'));
+    }
   }
 
   public static function templateListAjax($form, FormStateInterface $form_state) {
@@ -318,6 +338,7 @@ class CKEditor5Sections extends EditorBase implements ContainerFactoryPluginInte
     $settings['enabled_drupal_modules'] = array_keys($moduleHandler->getModuleList());
 
     $moduleHandler->alter('ckeditor5_sections_editor_settings', $settings);
+    $settings['advanced'] = isset($settings['advanced']) ? json_decode($settings['advanced'], TRUE) : [];
 
     return $settings;
   }

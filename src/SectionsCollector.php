@@ -6,6 +6,7 @@ use Drupal\Core\Config\ConfigEvents;
 use Drupal\Core\Config\ConfigImporterEvent;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Sections collector service class.
@@ -17,15 +18,22 @@ class SectionsCollector implements SectionsCollectorInterface, EventSubscriberIn
    */
   protected $entityTypeManager;
 
+  /**
+   * @var \Drupal\ckeditor5_sections\TwigProcessor
+   */
+  protected $twigProcessor;
+
   protected $sections;
 
   /**
    * SectionsCollector constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   * @param \Drupal\ckeditor5_sections\TwigProcessor $twigProcessor
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, TwigProcessor $twigProcessor) {
     $this->entityTypeManager = $entityTypeManager;
+    $this->twigProcessor = $twigProcessor;
   }
 
   /**
@@ -87,12 +95,22 @@ class SectionsCollector implements SectionsCollectorInterface, EventSubscriberIn
     }
     $files = file_scan_directory($directory, '/.*.yml/');
     $sections = [];
-    foreach ($files as $file => $fileInfo) {
-      $info = \Symfony\Component\Yaml\Yaml::parseFile($file);
-      $sections[$fileInfo->name] = [
-        'label' => array_key_exists('label', $info) ? $info['label'] : $fileInfo->name,
+    foreach ($files as $file => $file_info) {
+      $info = Yaml::parseFile($file);
+      $filename = dirname($file_info->uri) . '/' . $file_info->name;
+      // If the template is a Twig file, process the Twig placeholders etc.
+      if (file_exists($filename . '.html.twig')) {
+        $file_path = $filename . '.html.twig';
+        $template = $this->twigProcessor->processTwigTemplate($file_path);
+      }
+      else {
+        $file_path = $filename . '.html';
+        $template = file_get_contents($file_path);
+      }
+      $sections[$file_info->name] = [
+        'label' => array_key_exists('label', $info) ? $info['label'] : $file_info->name,
         'icon' => array_key_exists('icon', $info) ? $info['icon'] : 'text',
-        'template' => file_get_contents(dirname($fileInfo->uri) . '/' . $fileInfo->name . '.html'),
+        'template' => $template,
       ];
     }
     return $sections;

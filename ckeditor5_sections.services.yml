@@ -5,7 +5,7 @@ services:
     - { name: event_subscriber }
   ckeditor5_sections.sections_collector:
     class: Drupal\ckeditor5_sections\SectionsCollector
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@ckeditor5_sections.twig_processor']
     tags:
       - { name: event_subscriber }
   ckeditor5_sections.document_converter:
@@ -21,3 +21,6 @@ services:
   plugin.manager.ckeditor5_sections.section_validation:
     class: Drupal\ckeditor5_sections\SectionValidationPluginManager
     parent: default_plugin_manager
+  ckeditor5_sections.twig_processor:
+    class: Drupal\ckeditor5_sections\TwigProcessor
+    arguments: ['@twig']

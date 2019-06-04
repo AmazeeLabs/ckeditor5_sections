@@ -61,3 +61,12 @@ function ckeditor5_sections_media_source_info_alter(array &$sources) {
   $sources['image']['forms']['media_library_add'] = SectionsMediaLibraryUploadForm::class;
   $sources['video_file']['forms']['media_library_add'] = SectionsMediaLibraryUploadForm::class;
 }
+
+/**
+ * Implements hook_page_attachments().
+ */
+function ckeditor5_sections_page_attachments(array &$attachments) {
+  // TODO: Allow loading of user defined libraries.
+  $attachments['#attached']['library'][] = 'ckeditor5_sections/editor_components';
+  $attachments['#attached']['library'][] = 'ckeditor5_sections/sections';
+}

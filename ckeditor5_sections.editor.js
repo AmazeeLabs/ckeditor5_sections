@@ -222,11 +222,11 @@
       return;
     }
 
-    return window.ckeditor5_sections_builds[editorSettings.editorBuild].create(editor, {
+    return window.ckeditor5_sections_builds[editorSettings.editorBuild].create(editor, Object.assign({
       masterTemplate: editorSettings.masterTemplate,
       templates: editorSettings.templates,
       templateAttributes: editorSettings.templateAttributes,
       templateSession: editorSettings.templateSession,
-    });
+    }, editorSettings.advanced || {}));
   }
 }(jQuery, Drupal));

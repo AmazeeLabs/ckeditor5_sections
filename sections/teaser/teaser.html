@@ -1,15 +1,18 @@
 <ck-section class="teaser" itemtype="teaser" data-layout="">
-  <ck-media data-media-type="media:image"
-       data-media-uuid=""
-       itemprop="image"
-       itemtype="teaser-image"
-       class="teaser__image"
-  ></ck-media>
-  <div class="teaser__content">
-    <h2 ck-input="plain" itemprop="headline" class="teaser__headline">Headline</h2>
-    <div ck-input="full" itemprop="text" class="teaser__text">Content</div>
-    <ck-button itemtype="button" itemprop="link" class="teaser__link" link-target="">
-      <div itemprop="text" ck-input="plain">Link text placeholder</div>
-    </ck-button>
+  <div class="teaser__container">
+    <ck-media data-media-type="media:image"
+              data-media-uuid=""
+              itemprop="image"
+              itemtype="teaser-image"
+              class="teaser__image"
+              ck-upload="true"
+    ></ck-media>
+    <div class="teaser__content">
+      <h2 ck-input="plain" itemprop="headline" class="teaser__headline">Headline</h2>
+      <div ck-input="full" itemprop="text" class="teaser__text">Content</div>
+      <ck-button itemtype="button" itemprop="link" class="teaser__link" link-target="">
+        <div itemprop="text" ck-input="plain">Link text placeholder</div>
+      </ck-button>
+    </div>
   </div>
 </ck-section>

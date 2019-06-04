@@ -20,8 +20,10 @@ editor:
     - core/jquery.once
     - core/drupal
     - ckeditor5_sections/editor_build
+    - ckeditor5_sections/sections
 
-default-sections:
+sections:
   css:
     base:
-      sections/default-sections.css: {}
+      sections/image/image.css: {}
+      sections/teaser/teaser.css: {}

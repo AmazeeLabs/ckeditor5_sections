@@ -1,12 +1,13 @@
 <?php
 
-namespace Drupal\Tests\ckeditor5_sections\Unit;
+namespace Drupal\Tests\ckeditor5_sections\Kernel;
 
 use Drupal\ckeditor5_sections\Normalizer\DocumentSectionNormalizer;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
  * Tests for the Document parser class.
+ * @group ckeditor5_sections
  */
 class DocumentConverterTest extends KernelTestBase {
 
