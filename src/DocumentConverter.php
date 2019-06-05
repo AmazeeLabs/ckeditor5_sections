@@ -392,6 +392,9 @@ class DocumentConverter implements DocumentConverterInterface {
                   'uuid' => $node->getAttribute('data-media-uuid'),
                 ]);
               $item_field_data = reset($entities);
+              if (!$item_field_data) {
+                $item_field_data = NULL;
+              }
             }
             catch (\Exception $e) {
               $item_field_data = NULL;
