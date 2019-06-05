@@ -143,8 +143,8 @@ class DocumentConverter implements DocumentConverterInterface {
         foreach ($el->childNodes as $child) {
           $el->removeChild($child);
         }
-
-        foreach ($fragment->firstChild->childNodes as $child) {
+        // @todo: Test coverage.
+        foreach ($fragment->childNodes as $child) {
           $el->appendChild($child);
         }
       }
