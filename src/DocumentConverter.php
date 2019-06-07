@@ -9,6 +9,7 @@ use Drupal\Core\TypedData\ComplexDataDefinitionInterface;
 use Drupal\Core\TypedData\ListDataDefinitionInterface;
 use Drupal\Core\TypedData\ListInterface;
 use Drupal\Core\TypedData\TypedDataManagerInterface;
+use Drupal\Component\Utility\Html;
 
 /**
  * Parser class for extracting the section definitions and data from
@@ -139,7 +140,9 @@ class DocumentConverter implements DocumentConverterInterface {
       }
       else {
         $fragment = $el->ownerDocument->createDocumentFragment();
-        $fragment->appendXML('<div>' . $section->get($prop) . '</div>');
+        // Normalize html.
+        $prop_value = Html::normalize($section->get($prop));
+        $fragment->appendXML('<div>' . $prop_value . '</div>');
         foreach ($el->childNodes as $child) {
           $el->removeChild($child);
         }
