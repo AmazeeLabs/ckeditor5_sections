@@ -4,6 +4,7 @@ namespace Drupal\ckeditor5_sections;
 
 use Drupal\ckeditor5_sections\Plugin\DataType\DocumentSectionAdapter;
 use Drupal\ckeditor5_sections\TypedData\DocumentSectionDataDefinition;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\TypedData\ComplexDataDefinitionInterface;
 use Drupal\Core\TypedData\ListDataDefinitionInterface;
@@ -138,8 +139,9 @@ class DocumentConverter implements DocumentConverterInterface {
         }
       }
       else if( $value = $section->get($prop)) {
+        $prop_value = Html::normalize($value);
         $fragment = new \DOMDocument();
-        $fragment->loadHTML($value);
+        $fragment->loadHTML($prop_value);
         foreach ($el->childNodes as $child) {
           $el->removeChild($child);
         }
