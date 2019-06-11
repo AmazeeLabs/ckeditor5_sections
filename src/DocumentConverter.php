@@ -141,11 +141,11 @@ class DocumentConverter implements DocumentConverterInterface {
       else if( $value = $section->get($prop)) {
         $prop_value = Html::normalize($value);
         $fragment = new \DOMDocument();
-        $fragment->loadHTML($prop_value);
+        $fragment->loadHTML('<?xml encoding="utf-8" ?><div>' . $prop_value . '</div>');
         foreach ($el->childNodes as $child) {
           $el->removeChild($child);
         }
-        foreach ($fragment->documentElement->lastChild->childNodes as $child) {
+        foreach ($fragment->documentElement->lastChild->lastChild->childNodes as $child) {
           $el->appendChild($el->ownerDocument->importNode($child, TRUE));
         }
       }
