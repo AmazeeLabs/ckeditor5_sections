@@ -79,7 +79,7 @@ class CKEditor5SectionsMediaFilter extends FilterBase implements ContainerFactor
       $document = Html::load($text);
       $xpath = new \DOMXPath($document);
 
-      foreach ($xpath->query('//div[@data-media-uuid]') as $node) {
+      foreach ($xpath->query('//ck-media[@data-media-uuid]') as $node) {
         $media_uuid = $node->getAttribute('data-media-uuid');
         $display = $node->getAttribute('data-media-display');
         // Clear attributes and normalize.
