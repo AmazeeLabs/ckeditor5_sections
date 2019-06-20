@@ -293,7 +293,24 @@ class DocumentConverter implements DocumentConverterInterface {
           $node->hasAttribute('data-media-type') &&
           ($entity_type_id = @explode(':', trim($node->getAttribute('data-media-type')))[0])
         ) {
+          $itemtype = 'section:entity' . $entity_type_id;
           $attributes['entity'] = 'entity:' . $entity_type_id;
+
+          $result['entity' . $entity_type_id] = [
+            'type' => 'entity' . $entity_type_id,
+            'label' => 'Media Entity',
+            'fields' => [],
+          ];
+          $mergedAttributes = array_merge(array_map(function (\DOMNode $attribute) {
+            return $attribute->nodeValue;
+          }, iterator_to_array($node->attributes)), $attributes);
+
+          foreach ($mergedAttributes as $name => $attribute) {
+            $result['entity' . $entity_type_id]['fields'][$name] = [
+              'type' => $name == 'entity' ? $attribute : 'string',
+              'label' => $name,
+            ];
+          }
         }
 
         if ($node->hasAttribute('ck-contains')) {
@@ -302,7 +319,7 @@ class DocumentConverter implements DocumentConverterInterface {
         $result[$parentType]['fields'][$fieldName] = [
           'label' => $fieldName,
           'type' => $itemtype,
-          'attributes' => array_merge(array_map(function(\DOMNode $attribute) {
+          'attributes' => array_merge(array_map(function (\DOMNode $attribute) {
               return $attribute->nodeValue;
             }, iterator_to_array($node->attributes)), $attributes),
         ];
