@@ -15,6 +15,7 @@ import List from '@ckeditor/ckeditor5-list/src/list';
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
 import Table from '@ckeditor/ckeditor5-table/src/table';
 import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
+import Image from '@ckeditor/ckeditor5-image/src/image';
 import Template from '@amazee/ckeditor5-template/src/template';
 import BlockToolbar from '@ckeditor/ckeditor5-ui/src/toolbar/block/blocktoolbar';
 import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefromoffice';
@@ -41,6 +42,7 @@ SectionsEditor.builtinPlugins = [
 	List,
 	Paragraph,
 	Table,
+	Image,
 	TableToolbar,
 	BlockToolbar,
 	Template,
@@ -51,25 +53,26 @@ SectionsEditor.builtinPlugins = [
 
 // Editor configuration.
 SectionsEditor.defaultConfig = {
-  heading: {
-    options: [
-      { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-      { model: 'heading1', view: 'h1', title: 'Title', class: 'ck-heading_heading1' },
-      { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-      { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
-      { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
-    ]
-  },
+	heading: {
+		options: [
+		{ model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+		{ model: 'heading1', view: 'h1', title: 'Title', class: 'ck-heading_heading1' },
+		{ model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+		{ model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+		{ model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
+		]
+	},
 	toolbar: {
 		items: [
 			'bold',
 			'italic',
 			'link',
 			'underline',
-      'superscript',
-      'subscript',
+			'superscript',
+			'subscript',
 			'undo',
-			'redo'
+			'redo',
+			'image'
 		]
 	},
 	table: {
