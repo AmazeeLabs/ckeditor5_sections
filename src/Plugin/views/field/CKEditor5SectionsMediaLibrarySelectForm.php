@@ -35,7 +35,6 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
 
     // Render checkboxes for all rows.
     $form[$this->options['id']]['#tree'] = TRUE;
-    $return_type = \Drupal::request()->query->get('return_type');
     foreach ($this->view->result as $row_index => $row) {
       $entity = $this->getEntity($row);
       $form[$this->options['id']][$row_index] = [
@@ -44,7 +43,7 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
           '@label' => $entity->label(),
         ]),
         '#title_display' => 'invisible',
-        '#return_value' => $return_type == 'uuid' ? $entity->uuid() : $entity->id(),
+        '#return_value' => $entity->uuid(),
       ];
     }
 
@@ -66,9 +65,6 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
     $url = parse_url($form['#action'], PHP_URL_PATH);
     $query = $this->view->getRequest()->query->all();
     $query[FormBuilderInterface::AJAX_FORM_REQUEST] = TRUE;
-    if ($return_type) {
-      $query['return_type'] = $return_type;
-    }
     $form['actions']['submit']['#ajax'] = [
       'url' => Url::fromUserInput($url),
       'options' => [
@@ -123,23 +119,6 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
     }
 
     return $response;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function viewsFormValidate(array &$form, FormStateInterface $form_state) {
-    $return_type = \Drupal::request()->query->get('return_type');
-
-    if ($return_type == 'uuid') {
-      $selected = $form_state->getValue($this->options['id'], []);
-    }
-    else {
-      $selected = array_filter($form_state->getValue($this->options['id']));
-    }
-    if (empty($selected)) {
-      $form_state->setErrorByName('', $this->t('No items selected.'));
-    }
   }
 
 }

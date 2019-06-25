@@ -26,10 +26,6 @@ class SectionsMediaLibraryUploadForm extends FileUploadForm {
     $form = parent::buildForm($form, $formState);
 
     $params = $this->getMediaLibraryState($formState)->all();
-    $return_type = $this->getRequest()->query->get('return_type');
-    if ($return_type) {
-      $params['return_type'] = $return_type;
-    }
 
     $form['#action'] = Url::fromRoute('media_library.ui', [], [
       'query' => $params,
@@ -52,7 +48,6 @@ class SectionsMediaLibraryUploadForm extends FileUploadForm {
     $element = parent::processUploadElement($element, $form_state);
     $query = $this->getMediaLibraryState($form_state)->all() + [
       FormBuilderInterface::AJAX_FORM_REQUEST => TRUE,
-      'return_type' => $this->getRequest()->query->get('return_type'),
     ];
     $element['upload_button']['#ajax']['options']['query'] = $query;
 
@@ -67,9 +62,8 @@ class SectionsMediaLibraryUploadForm extends FileUploadForm {
       return $form;
     }
 
-    $return_type = $this->getRequest()->query->get('return_type');
-    $media_ids = array_map(function (MediaInterface $media) use ($return_type) {
-      return $return_type == 'uuid' ? $media->uuid() : $media->id();
+    $media_ids = array_map(function (MediaInterface $media) {
+      return $media->uuid();
     }, $this->getAddedMediaItems($form_state));
 
     $response = new AjaxResponse();
@@ -88,12 +82,8 @@ class SectionsMediaLibraryUploadForm extends FileUploadForm {
 
     $opener_id = $this->getMediaLibraryState($formState)->getOpenerId();
     if ($field_id = MediaLibraryWidget::getOpenerFieldId($opener_id)) {
-      $return_type = $this->getRequest()->query->get('return_type');
-      $current_media_ids = array_map(function (MediaInterface $media) use ($return_type) {
-        if ($return_type == 'uuid') {
-          return $media->uuid();
-        }
-        return $media->id();
+      $current_media_ids = array_map(function (MediaInterface $media) {
+        return $media->uuid();
       }, $this->getCurrentMediaItems($formState));
       // Pass the selection to the field widget based on the current widget ID.
       return (new AjaxResponse())
