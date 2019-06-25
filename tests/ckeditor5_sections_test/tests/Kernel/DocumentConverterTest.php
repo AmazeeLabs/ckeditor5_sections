@@ -15,6 +15,8 @@ class DocumentConverterTest extends KernelTestBase {
     'editor',
     'filter',
     'serialization',
+    'media',
+    'node'
   ];
 
   /**

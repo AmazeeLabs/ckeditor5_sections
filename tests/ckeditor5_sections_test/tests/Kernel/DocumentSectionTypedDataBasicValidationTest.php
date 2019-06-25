@@ -26,6 +26,8 @@ class DocumentSectionTypedDataBasicValidationTest extends KernelTestBase {
     'editor',
     'filter',
     'serialization',
+    'media',
+    'node',
   ];
 
   /**

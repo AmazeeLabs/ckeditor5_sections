@@ -22,6 +22,8 @@ class DocumentSectionTypedDataCustomValidationTest extends KernelTestBase {
     'editor',
     'filter',
     'serialization',
+    'media',
+    'node',
   ];
 
   /**
