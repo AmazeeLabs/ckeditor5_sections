@@ -10,7 +10,7 @@ use Drupal\text\Plugin\Field\FieldType\TextWithSummaryItem;
 class TextWithSummaryAndSectionsItem extends TextWithSummaryItem {
 
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
-    $properties =  parent::propertyDefinitions($field_definition);
+    $properties = parent::propertyDefinitions($field_definition);
 
     $properties['sections'] = DataDefinition::create('any')
       ->setLabel(t('Sections'))
@@ -23,4 +23,5 @@ class TextWithSummaryAndSectionsItem extends TextWithSummaryItem {
 
     return $properties;
   }
+
 }

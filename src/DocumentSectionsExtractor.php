@@ -14,6 +14,7 @@ class DocumentSectionsExtractor extends TypedData {
    * @var array|null
    */
   protected $sections = NULL;
+
   /**
    * {@inheritdoc}
    */
@@ -57,4 +58,5 @@ class DocumentSectionsExtractor extends TypedData {
       $this->parent->onChange($this->name);
     }
   }
+
 }

@@ -34,6 +34,7 @@ class DocumentConverter implements DocumentConverterInterface {
 
   /**
    * Maps type names to their template DOM nodes.
+   *
    * @var \DOMElement[]
    */
   protected $typeNodeMap;
@@ -60,6 +61,7 @@ class DocumentConverter implements DocumentConverterInterface {
 
   /**
    * Retrieve all section type definitions.
+   *
    * @return array
    */
   public function getSectionTypeDefinitions() {
@@ -138,7 +140,7 @@ class DocumentConverter implements DocumentConverterInterface {
           $el->appendChild($childSection);
         }
       }
-      else if( $value = $section->get($prop)) {
+      elseif ($value = $section->get($prop)) {
         $prop_value = Html::normalize($value);
         $fragment = new \DOMDocument();
         $fragment->loadHTML('<?xml encoding="utf-8" ?><div>' . $prop_value . '</div>');
@@ -172,7 +174,6 @@ class DocumentConverter implements DocumentConverterInterface {
     // attributes are converted to properties according to
     // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset
     // @todo: handle the case when the same item type appears more times, and check for recursion.
-
     // 2. If the element has an 'itemprop' then this is treated like a property
     // (field) and attached to the parent type (it will be basically the first
     // ancestor element which has an itemtype). If there is not parent, then the
@@ -180,7 +181,6 @@ class DocumentConverter implements DocumentConverterInterface {
     // The type of the fields depends on the 'itemtype' property of the element.
     // If the 'itemtype' is empty, then the type will be set to string. If there
     // is an 'itemtype' then this will become the type of the field.
-
     $dom = new \DOMDocument();
     // Load the document and convert the encoding to HTML-ENTITIES, see
     // https://davidwalsh.name/domdocument-utf8-problem
@@ -209,10 +209,10 @@ class DocumentConverter implements DocumentConverterInterface {
   public function extractSectionData($document) {
     $dom = new \DOMDocument();
     $dom->loadHTML(mb_convert_encoding($document, 'HTML-ENTITIES', 'UTF-8'), LIBXML_NOERROR);
-    //$list_definition = \Drupal::typedDataManager()->createListDataDefinition('section');
-    //$result = \Drupal::typedDataManager()->create($list_definition);
+    // $list_definition = \Drupal::typedDataManager()->createListDataDefinition('section');
+    // $result = \Drupal::typedDataManager()->create($list_definition);
     $result = [];
-    if($dom->documentElement->hasAttribute('itemtype')) {
+    if ($dom->documentElement->hasAttribute('itemtype')) {
       throw new \Exception('Data extraction requires type definition at root.');
     }
     $this->buildSectionData($dom, $result);
@@ -223,9 +223,9 @@ class DocumentConverter implements DocumentConverterInterface {
    * Recursively traverses a dom and extracts the section definitions.
    *
    * @param \DOMNode $node
-   *  The node currently being processed.
+   *   The node currently being processed.
    * @param $result
-   *  The extraction result.
+   *   The extraction result.
    */
   protected function buildSectionDefinitions(\DOMNode $node, &$result, $parentType = '') {
     // If the current node is a DOMElement, process it.
@@ -258,7 +258,7 @@ class DocumentConverter implements DocumentConverterInterface {
             in_array($attributeName, ['itemtype', 'itemscope', 'itemprop', 'itemexpand', 'class']) ||
             // Also, if the attribute name starts with 'ck-', we ignore it as
             // well.
-            strpos($attributeName, 'ck-') === 0 ) {
+            strpos($attributeName, 'ck-') === 0) {
             $internalAttributes[$attributeName] = $attribute->nodeValue;
             continue;
           }
@@ -302,9 +302,9 @@ class DocumentConverter implements DocumentConverterInterface {
         $result[$parentType]['fields'][$fieldName] = [
           'label' => $fieldName,
           'type' => $itemtype,
-          'attributes' => array_merge(array_map(function(\DOMNode $attribute) {
+          'attributes' => array_merge(array_map(function (\DOMNode $attribute) {
               return $attribute->nodeValue;
-            }, iterator_to_array($node->attributes)), $attributes),
+          }, iterator_to_array($node->attributes)), $attributes),
         ];
 
         if ($node->hasAttribute('ck-contains')) {
@@ -471,7 +471,10 @@ class DocumentConverter implements DocumentConverterInterface {
   // did not work properly when having lists of items. So for now we just use
   // the above implementation which uses the typed data information to retrieve
   // the metadata about the fields, but the values themselves are stored in
-  // DocumentSection objects.
+
+  /**
+   * DocumentSection objects.
+   */
   public function __buildSectionData(\DOMNode $node, ListInterface $result, DocumentSectionAdapter $parent = NULL) {
     $new_result = $result;
     $new_parent = $parent;
@@ -579,9 +582,10 @@ class DocumentConverter implements DocumentConverterInterface {
    * Returns the inner html of a DOM node.
    *
    * @param \DOMNode $node
-   *  The DOM node.
+   *   The DOM node.
+   *
    * @return string
-   *  The html result.
+   *   The html result.
    */
   protected function getDOMInnerHtml(\DOMNode $node) {
     $innerHTML = "";
@@ -590,4 +594,5 @@ class DocumentConverter implements DocumentConverterInterface {
     }
     return $innerHTML;
   }
+
 }

@@ -2,12 +2,10 @@
 
 namespace Drupal\ckeditor5_sections;
 
-use Drupal\ckeditor5_sections\Event\ProcessTwigEvent;
 use Drupal\Core\Template\TwigEnvironment;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Class TwigProcessor
+ * Class TwigProcessor.
  *
  * @package Drupal\ckeditor5_sections
  */
@@ -33,6 +31,7 @@ class TwigProcessor {
    * @param string $file_path
    *
    * @return string
+   *
    * @throws \Twig\Error\LoaderError
    * @throws \Twig\Error\RuntimeError
    * @throws \Twig\Error\SyntaxError

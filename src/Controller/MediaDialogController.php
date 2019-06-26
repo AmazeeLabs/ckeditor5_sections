@@ -59,7 +59,8 @@ class MediaDialogController extends ControllerBase {
 
     if ($query->get('upload_form')) {
       unset($libraryUi['content']['view']);
-    } else {
+    }
+    else {
       unset($libraryUi['content']['form']);
     }
 

@@ -43,7 +43,8 @@ class DocumentSectionNormalizer extends NormalizerBase implements DenormalizerIn
       return array_map(function ($item) use ($class, $format, $context) {
         return $this->denormalize($item, $class, $format, $context);
       }, $data);
-    } elseif (is_array($data) && !empty($data['__type'])) {
+    }
+    elseif (is_array($data) && !empty($data['__type'])) {
       $section = new DocumentSection('section:' . $data['__type']);
       foreach ($data as $field => $value) {
         if ($field === '__type') {
@@ -61,4 +62,5 @@ class DocumentSectionNormalizer extends NormalizerBase implements DenormalizerIn
     }
     throw new InvalidArgumentException('The data must be either an array of sections or an array with the section information.');
   }
+
 }

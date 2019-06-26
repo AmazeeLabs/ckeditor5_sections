@@ -40,7 +40,7 @@ class SectionsCollector implements SectionsCollectorInterface, EventSubscriberIn
    * Returns an array with all the available templates from the system.
    *
    * @return array
-   *  An array of all the available sections.
+   *   An array of all the available sections.
    */
   public function getSections($directory = NULL) {
     if ($directory) {
@@ -54,12 +54,12 @@ class SectionsCollector implements SectionsCollectorInterface, EventSubscriberIn
       /** @var Editor[] $editors */
       $editors = $storage->loadByProperties([
         'editor' => 'ckeditor5_sections',
-        'status' => TRUE
+        'status' => TRUE,
       ]);
 
       /** @var \Drupal\ckeditor5_sections\SectionsCollectorInterface $collector */
       $templates = [];
-      foreach($editors as $editor) {
+      foreach ($editors as $editor) {
         $templates = array_merge($templates, $this->collectSectionsFromDirectory($editor->getSettings()['templateDirectory']));
       }
 
@@ -72,6 +72,7 @@ class SectionsCollector implements SectionsCollectorInterface, EventSubscriberIn
    * Returns all sections defined in templates/sections.
    *
    * @param null $directory
+   *
    * @return array
    */
   public function getSectionDefinitions($directory = NULL) {

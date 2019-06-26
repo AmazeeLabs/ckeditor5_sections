@@ -18,18 +18,19 @@ interface DocumentConverterInterface {
    * be a valid XML string.
    *
    * @param string $document
-   *  The document to be parsed.
+   *   The document to be parsed.
+   *
    * @return array
-   *  The section definitions. The keys of the items in the array represent the
-   *  type of the section. The values are associative arrays with the following
-   *  keys:
+   *   The section definitions. The keys of the items in the array represent the
+   *   type of the section. The values are associative arrays with the following
+   *   keys:
    *   - type: The type of the section.
    *   - fields: An array with all the fields of the section type. Each key
    *     identifies the field name, and each value contains another array with
    *     at least two keys: the label of the field and the type of the field.
    *     The type of the field can be have any Drupal typed data value.
-   *  Example of a returned result:
-   * [
+   *   Example of a returned result:
+   *   [
    *   'teaser' => [
    *     'type' => 'teaser',
    *     'fields' => [
@@ -60,19 +61,20 @@ interface DocumentConverterInterface {
    *        ],
    *      ]
    *    ]
-   * ]
+   *   ]
    */
   public function extractSectionDefinitions($document);
 
   /**
    * Extracts the section data from a document.
    *
-   * The data has to match the section definition we have
+   * The data has to match the section definition we have.
    *
    * @param string $document
-   *  The document to be parsed for the data.
+   *   The document to be parsed for the data.
+   *
    * @return \Drupal\ckeditor5_sections\DocumentSection
-   *  The root section object.
+   *   The root section object.
    */
   public function extractSectionData($document);
 
@@ -86,4 +88,5 @@ interface DocumentConverterInterface {
    *   The rebuilt document.
    */
   public function buildDocument(DocumentSection $section);
+
 }

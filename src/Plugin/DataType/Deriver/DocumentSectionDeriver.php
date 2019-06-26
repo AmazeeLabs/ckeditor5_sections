@@ -4,7 +4,6 @@ namespace Drupal\ckeditor5_sections\Plugin\DataType\Deriver;
 
 use Drupal\ckeditor5_sections\DocumentSection;
 use Drupal\Component\Plugin\Derivative\DeriverBase;
-use Drupal\editor\Entity\Editor;
 
 /**
  * Provides data type plugins for each document section type.
@@ -28,12 +27,13 @@ class DocumentSectionDeriver extends DeriverBase {
    * Returns an array with all the available document section types from the
    * system.
    *
-   * @return DocumentSection[]
+   * @return \Drupal\ckeditor5_sections\DocumentSection[]
    */
   protected function getSectionTypes() {
     $section_types = \Drupal::getContainer()->get('ckeditor5_sections.document_converter')->getSectionTypeDefinitions();
-    return array_map(function($section) {
+    return array_map(function ($section) {
       return new DocumentSection($section['type']);
     }, $section_types);
   }
+
 }

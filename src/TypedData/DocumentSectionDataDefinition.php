@@ -150,7 +150,6 @@ class DocumentSectionDataDefinition extends MapDataDefinition {
       ]);
     }
     // @todo: add alter hook.
-
   }
 
 }

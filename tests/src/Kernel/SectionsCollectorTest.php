@@ -5,7 +5,7 @@ namespace Drupal\Tests\ckeditor5_sections\Kernel;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
- * Class SectionsCollectorTest
+ * Class SectionsCollectorTest.
  *
  * @package Drupal\Tests\ckeditor5_sections\Kernel
  * @group ckeditor5_sections

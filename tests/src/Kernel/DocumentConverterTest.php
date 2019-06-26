@@ -7,6 +7,7 @@ use Drupal\KernelTests\KernelTestBase;
 
 /**
  * Tests for the Document parser class.
+ *
  * @group ckeditor5_sections
  */
 class DocumentConverterTest extends KernelTestBase {
@@ -16,7 +17,7 @@ class DocumentConverterTest extends KernelTestBase {
     'editor',
     'media',
     'filter',
-    'serialization'
+    'serialization',
   ];
 
   /**
@@ -62,7 +63,6 @@ class DocumentConverterTest extends KernelTestBase {
   public function extractSectionDefinitionsProvider() {
     return $this->loadTestAssets('assets/definitions');
   }
-
 
   /**
    * Data provider for document conversion tests.
@@ -119,4 +119,5 @@ class DocumentConverterTest extends KernelTestBase {
     $result = $doc->saveHTML();
     $this->assertXmlStringEqualsXmlString($document, $result);
   }
+
 }

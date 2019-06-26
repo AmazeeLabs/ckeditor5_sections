@@ -47,9 +47,10 @@ class MediaPreviewController extends ControllerBase {
    *   The display to use.
    *
    * @return \Symfony\Component\HttpFoundation\Response
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  function preview($uuid, $display) {
+  public function preview($uuid, $display) {
     $media = $this->entityRepository->loadEntityByUuid('media', $uuid);
     if (!$media) {
       return;

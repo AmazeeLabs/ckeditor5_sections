@@ -133,11 +133,13 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
 
     if ($return_type == 'uuid') {
       $selected = $form_state->getValue($this->options['id'], []);
-    } else {
+    }
+    else {
       $selected = array_filter($form_state->getValue($this->options['id']));
     }
     if (empty($selected)) {
       $form_state->setErrorByName('', $this->t('No items selected.'));
     }
   }
+
 }

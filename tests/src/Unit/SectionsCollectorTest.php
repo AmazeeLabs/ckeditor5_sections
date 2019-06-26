@@ -4,7 +4,9 @@ namespace {
 
   if (!function_exists('file_scan_directory')) {
 
-    // Mock a global function.
+    /**
+     * Mock a global function.
+     */
     function file_scan_directory($dir) {
       $path = __DIR__ . '/assets/data/';
       return [
@@ -33,7 +35,7 @@ namespace Drupal\Tests\ckeditor5_sections\Unit {
   use Drupal\Tests\UnitTestCase;
 
   /**
-   * Class SectionsCollectorTest
+   * Class SectionsCollectorTest.
    *
    * @package Drupal\Tests\ckeditor5_sections\Unit
    * @group ckeditor5_sections

@@ -3,7 +3,7 @@
 namespace Drupal\ckeditor5_sections;
 
 /**
- * Class DocumentSection
+ * Class DocumentSection.
  */
 class DocumentSection implements DocumentSectionInterface {
 
@@ -64,4 +64,5 @@ class DocumentSection implements DocumentSectionInterface {
       }
     }, $value);
   }
+
 }

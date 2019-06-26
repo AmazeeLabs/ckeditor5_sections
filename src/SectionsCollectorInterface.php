@@ -25,4 +25,5 @@ interface SectionsCollectorInterface {
    * @return array
    */
   public function getSectionDefinitions($directory = NULL);
+
 }

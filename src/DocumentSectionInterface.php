@@ -11,4 +11,5 @@ interface DocumentSectionInterface {
   public function get($field_name);
 
   public function getFields();
+
 }
