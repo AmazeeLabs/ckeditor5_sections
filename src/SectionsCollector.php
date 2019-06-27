@@ -62,7 +62,6 @@ class SectionsCollector implements SectionsCollectorInterface, EventSubscriberIn
       foreach ($editors as $editor) {
         $templates = array_merge($templates, $this->collectSectionsFromDirectory($editor->getSettings()['templateDirectory']));
       }
-
       $this->sections = $templates;
     }
     return $this->sections;

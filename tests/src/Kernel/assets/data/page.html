@@ -9,24 +9,20 @@
       ></ck-media>
       <div class="image__caption" itemprop="caption">Caption</div>
     </ck-section>
-    <div class="text" itemtype="text">
+    <ck-section class="text" itemtype="text">
       <h2 itemprop="headline">Headline</h2>
       <div class="text__content" itemprop="content">Content</div>
-    </div>
+    </ck-section>
     <ck-section class="teaser" itemtype="teaser" data-layout="test">
-      <ck-media data-media-type="media:image"
-                data-media-uuid="123"
-                itemprop="image"
-                itemtype="teaser-image"
-                class="teaser__image"
-      ></ck-media>
-
-      <div class="teaser__content">
-        <h2 itemprop="headline" class="teaser__headline">Title</h2>
-        <div itemprop="text" class="teaser__text"><p>This is the content.</p></div>
-        <ck-button itemtype="button" itemprop="link" class="teaser__link" link-target="http://www.drupal.org">
-          <div itemprop="text">Click me!!!</div>
-        </ck-button>
+      <div class="teaser__container">
+        <ck-media class="teaser__image" data-media-type="media:image" data-media-uuid="123" itemprop="image" itemtype="teaser-image"/>
+        <div class="teaser__content">
+          <h2 class="teaser__headline" itemprop="headline">Title</h2>
+          <div class="teaser__text" itemprop="text"><p>This is the content.</p></div>
+          <ck-button class="teaser__link" itemprop="link" itemtype="button" link-target="http://www.drupal.org">
+            <div itemprop="text">Click me!!!</div>
+          </ck-button>
+        </div>
       </div>
     </ck-section>
   </ck-container>

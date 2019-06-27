@@ -4,8 +4,8 @@
   "data-layout": "test",
   "text": "<p>This is the content.</p>",
   "image": {
-    "__type": "teaser-image",
-    "data-media-type": "image",
+    "__type": "teaser_image",
+    "data-media-type": "media:image",
     "data-media-uuid": "123"
   },
   "link": {

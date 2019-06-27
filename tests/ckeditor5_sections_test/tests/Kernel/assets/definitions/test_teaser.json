@@ -7,13 +7,13 @@
         "type": "string"
       },
       "image": {
-        "type": "section:teaser-image",
+        "type": "section:teaser_image",
         "label": "image",
         "attributes": {
           "data-media-type": "media:image",
           "data-media-uuid": "",
           "itemprop": "image",
-          "itemtype": "teaser-image",
+          "itemtype": "teaser_image",
           "class": "teaser__image",
           "entity": "entity:media"
         }
@@ -54,8 +54,8 @@
       "itemtype": "test_teaser"
     }
   },
-  "teaser-image": {
-    "type": "teaser-image",
+  "teaser_image": {
+    "type": "teaser_image",
     "fields": {
       "data-media-type": {
         "label": "data-media-type",
@@ -72,7 +72,7 @@
     },
     "attributes": {
       "itemprop": "image",
-      "itemtype": "teaser-image",
+      "itemtype": "teaser_image",
       "class": "teaser__image"
     }
   },

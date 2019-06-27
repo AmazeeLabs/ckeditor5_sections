@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  * Tests for the Document parser class.
  */
 class DocumentSectionTypedDataBasicValidationTest extends KernelTestBase {
+
   /**
    * TypedDataManager.
    *
@@ -28,6 +29,9 @@ class DocumentSectionTypedDataBasicValidationTest extends KernelTestBase {
     'serialization',
     'media',
     'node',
+    'user',
+    'file',
+    'image',
   ];
 
   /**
@@ -37,6 +41,7 @@ class DocumentSectionTypedDataBasicValidationTest extends KernelTestBase {
     parent::setUp();
     $this->installConfig(['ckeditor5_sections']);
     $this->installConfig(['ckeditor5_sections_test']);
+
     $this->typedDataManager = \Drupal::service('typed_data_manager');
     // @todo: use a more "default" discovery method (plugins / annototions?
     // {module_name}.sections.yml-file.
@@ -55,6 +60,9 @@ class DocumentSectionTypedDataBasicValidationTest extends KernelTestBase {
     $settings['templateDirectory'] = realpath(__DIR__ . '/../../sections');
     $editor->setSettings($settings);
     $editor->save();
+
+    $this->installEntitySchema('media');
+    $this->installEntitySchema('media_type');
   }
 
   /**

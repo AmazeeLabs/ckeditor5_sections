@@ -4,6 +4,9 @@ namespace Drupal\Tests\ckeditor5_sections\Kernel;
 
 use Drupal\ckeditor5_sections\Normalizer\DocumentSectionNormalizer;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\media\Entity\Media;
+use Drupal\media\Entity\MediaType;
+use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 
 /**
  * Tests for the Document parser class.
@@ -12,11 +15,18 @@ use Drupal\KernelTests\KernelTestBase;
  */
 class DocumentConverterTest extends KernelTestBase {
 
+  use MediaTypeCreationTrait;
+
   public static $modules = [
+    'system',
+    'field',
+    'file',
+    'image',
     'ckeditor5_sections',
     'editor',
     'media',
     'filter',
+    'user',
     'serialization',
   ];
 

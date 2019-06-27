@@ -17,4 +17,18 @@ use Drupal\Core\TypedData\Plugin\DataType\Map;
  */
 class DocumentSectionAdapter extends Map {
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getProperties($include_computed = FALSE) {
+    $properties = [];
+    foreach ($this->definition->getPropertyDefinitions() as $name => $definition) {
+      // Exclude entity from properties.
+      if (($include_computed || !$definition->isComputed()) && $name !== 'entity') {
+        $properties[$name] = $this->get($name);
+      }
+    }
+    return $properties;
+  }
+
 }
