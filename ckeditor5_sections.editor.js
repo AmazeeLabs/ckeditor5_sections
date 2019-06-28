@@ -106,7 +106,7 @@
       var selectedType = '';
 
       if (type === 'media') {
-        var path = (operation === 'add') ? '/sections/dialog?upload_form=1' : '/sections/dialog?upload_form=0';
+        var path = (operation === 'add') ? 'sections/dialog?upload_form=1' : 'sections/dialog?upload_form=0';
 
         // Filter allowed media types.
         if (typeof bundle != 'undefined') {
