@@ -174,7 +174,7 @@
 
       var type = event.detail.type.split(':')[0];
 
-      $.ajax('/sections/' + (type === 'media' ? 'media' : 'content') + '-preview/' + event.detail.uuid + '/' + event.detail.display || 'default' )
+      $.ajax(Drupal.url('sections/' + (type === 'media' ? 'media' : 'content') + '-preview/' + event.detail.uuid + '/' + event.detail.display || 'default' ))
           .done(function (preview) { event.respond(preview); });
     });
 
