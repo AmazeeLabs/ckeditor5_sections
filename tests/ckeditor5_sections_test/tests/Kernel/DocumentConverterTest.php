@@ -102,7 +102,7 @@ class DocumentConverterTest extends KernelTestBase {
    */
   public function testExtractSectionData($document, $result) {
     /** @var \Symfony\Component\Serializer\Normalizer\NormalizerInterface $normalizer */
-    $normalizer = new DocumentSectionNormalizer();;
+    $normalizer = new DocumentSectionNormalizer();
     $documentParser = $this->container->get('ckeditor5_sections.document_converter');
     /** @var \Drupal\ckeditor5_sections\DocumentSection $data */
     $data = $documentParser->extractSectionData($document);

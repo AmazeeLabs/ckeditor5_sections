@@ -148,4 +148,19 @@ class DocumentSectionTypedDataBasicValidationTest extends KernelTestBase {
     $this->assertEqual($errors->get(0)->getCode(), CountConstraint::TOO_MANY_ERROR);
   }
 
+  /**
+   * Test children validation.
+   */
+  public function testContainerChildrenValidation() {
+    $pageDefinition = $this->typedDataManager->createDataDefinition('section:test_page');
+    $pageJson = json_decode(file_get_contents(__DIR__ . '/assets/data/test_page.json'), TRUE);
+
+    $section = $this->typedDataManager->create($pageDefinition, $pageJson);
+    $sections = $section->get('sections');
+    foreach ($sections as $name => $prop) {
+      // No props here.
+      $this->assertEqual(array_keys($prop->getProperties()), array_keys($prop->getValue()));
+    }
+  }
+
 }
