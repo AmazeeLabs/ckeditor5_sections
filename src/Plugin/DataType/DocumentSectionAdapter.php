@@ -22,6 +22,9 @@ class DocumentSectionAdapter extends Map {
    */
   public function getProperties($include_computed = FALSE) {
     $properties = [];
+    if ($this->definition->getDataType() == 'section:Section') {
+      $this->definition = $this->getTypedDataManager()->createDataDefinition('section:' . $this->getValue()['__type']);
+    }
     foreach ($this->definition->getPropertyDefinitions() as $name => $definition) {
       // Exclude entity from properties.
       if (($include_computed || !$definition->isComputed()) && $name !== 'entity') {
