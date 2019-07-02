@@ -12,9 +12,9 @@ settings:
   templateDirectory: ''
   rootElement: page
   enabledSections:
-    text: 0
-    image: 0
-    media: 0
+    text: '0'
+    image: '0'
+    media: '0'
   editorBuild: ckeditor5_sections/editor_build
   plugins:
     drupallink:

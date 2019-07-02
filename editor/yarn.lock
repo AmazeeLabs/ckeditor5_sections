@@ -3,14 +3,16 @@
 
 
 "@amazee/ckeditor5-template@https://github.com/AmazeeLabs/ckeditor5-template":
-  version "0.0.28"
-  resolved "https://github.com/AmazeeLabs/ckeditor5-template#243e30b5e1b22004f17e216ab33b416055097a24"
+  version "0.0.27"
+  resolved "https://github.com/AmazeeLabs/ckeditor5-template#67608f49cd839d5005a1dc67bee8ac2fefc83cda"
   dependencies:
     "@ckeditor/ckeditor5-core" "^12.0.0"
     "@ckeditor/ckeditor5-engine" "^13.1.0"
+    "@ckeditor/ckeditor5-table" "^12.0.1"
     "@ckeditor/ckeditor5-ui" "^12.0.0"
     "@ckeditor/ckeditor5-utils" "^12.1.0"
     "@ckeditor/ckeditor5-widget" "^11.0.1"
+    lodash-es "^4.17.10"
 
 "@amazee/editor-components@https://github.com/AmazeeLabs/editor-components.git":
   version "1.0.0"
@@ -828,6 +830,15 @@
     "@ckeditor/ckeditor5-core" "^12.1.1"
     "@ckeditor/ckeditor5-engine" "^13.1.1"
 
+"@ckeditor/ckeditor5-table@^12.0.1":
+  version "12.0.1"
+  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-table/-/ckeditor5-table-12.0.1.tgz#3ff5570b6bdeebcf928e4b23fae6650da7dc8ec0"
+  integrity sha512-Lww9kTUMetBn/wjrazfjLKQYAU8aylqjkRsLSQvO1e3ztMlPRUEjdzMy9sBcwlWfczXSkAEbNrI917+PbISisQ==
+  dependencies:
+    "@ckeditor/ckeditor5-core" "^12.1.0"
+    "@ckeditor/ckeditor5-ui" "^12.1.0"
+    "@ckeditor/ckeditor5-widget" "^11.0.1"
+
 "@ckeditor/ckeditor5-table@^13.0.0":
   version "13.0.0"
   resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-table/-/ckeditor5-table-13.0.0.tgz#6a5e1a48cca7d9b2decf1014bd7865a6e0df81e1"
@@ -853,7 +864,7 @@
     "@ckeditor/ckeditor5-engine" "^13.1.1"
     "@ckeditor/ckeditor5-utils" "^12.1.1"
 
-"@ckeditor/ckeditor5-ui@^12.0.0":
+"@ckeditor/ckeditor5-ui@^12.0.0", "@ckeditor/ckeditor5-ui@^12.1.0":
   version "12.1.0"
   resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-ui/-/ckeditor5-ui-12.1.0.tgz#9e594e80009788cc7094d700149ff2dc134f53ba"
   integrity sha512-RwixUS8mSUOXJfaiWBAVuVPqvqrAkX+snz2zJ+LDIdRDcqiAiK8oVeneNYoHYN3qOFqI31KK/EK38MupINMTbQ==
