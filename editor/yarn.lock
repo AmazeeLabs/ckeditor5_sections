@@ -16,7 +16,7 @@
 
 "@amazee/editor-components@https://github.com/AmazeeLabs/editor-components.git":
   version "1.0.0"
-  resolved "https://github.com/AmazeeLabs/editor-components.git#15e2f7df4224adaf127132d582adc063f1f90e0e"
+  resolved "https://github.com/AmazeeLabs/editor-components.git#e7bb540a3fc31b7c6b8adb93331f0507e51abb7f"
   dependencies:
     "@storybook/html" "^5.0"
     global latest
