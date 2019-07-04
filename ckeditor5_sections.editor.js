@@ -106,7 +106,7 @@
       var selectedType = '';
 
       if (type === 'media') {
-        var path = (operation === 'add') ? '/sections/dialog?upload_form=1' : '/sections/dialog?upload_form=0';
+        var path = (operation === 'add') ? 'sections/dialog?upload_form=1' : 'sections/dialog?upload_form=0';
 
         // Filter allowed media types.
         if (typeof bundle != 'undefined') {
@@ -119,7 +119,7 @@
         }
 
         Drupal.ajax({
-          url: path + '&field_id=' + $(element).attr('id') + typeFilter + '&return_type=uuid&media_library_selected_type=' + selectedType + '&media_library_remaining=1',
+          url: Drupal.url(path + '&field_id=' + $(element).attr('id') + typeFilter + '&return_type=uuid&media_library_selected_type=' + selectedType + '&media_library_remaining=1'),
           dialogType: 'modal',
           dialog: {
             dialogClass: 'media-library-widget-modal',
@@ -174,7 +174,7 @@
 
       var type = event.detail.type.split(':')[0];
 
-      $.ajax('/sections/' + (type === 'media' ? 'media' : 'content') + '-preview/' + event.detail.uuid + '/' + event.detail.display || 'default' )
+      $.ajax(Drupal.url('sections/' + (type === 'media' ? 'media' : 'content') + '-preview/' + event.detail.uuid + '/' + event.detail.display || 'default' ))
           .done(function (preview) { event.respond(preview); });
     });
 
