@@ -9,3 +9,4 @@ import "@amazee/editor-components/components/media_conflict/index";
 import "@amazee/editor-components/components/media/index";
 import "@amazee/editor-components/components/textfield/index";
 import "@amazee/editor-components/components/accordion/index";
+import "@amazee/editor-components/components/select/index";
