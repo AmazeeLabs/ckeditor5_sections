@@ -15,13 +15,9 @@ export default class Container extends EditorElement {
   constructor() {
     super();
     this.observer = null;
-    this.observer = new MutationObserver(() => this.processChildren());
-    this.observer.observe(this, {
-      attributes: false,
-      childList: true,
-      subtree: false
-    });
     this.closed = false;
+    this.max = 0;
+    this.sections = "";
   }
 
   firstUpdated() {
@@ -30,6 +26,13 @@ export default class Container extends EditorElement {
 
   connectedCallback() {
     super.connectedCallback();
+    this.observer = new MutationObserver(() => this.processChildren());
+    this.observer.observe(this, {
+      attributes: true,
+      childList: true,
+      subtree: false
+    });
+
     this.processChildren();
   }
 
