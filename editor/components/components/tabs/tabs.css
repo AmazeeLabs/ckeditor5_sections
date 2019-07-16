@@ -1,0 +1,112 @@
+:host {
+  --color-blue: #004adc;
+  --color-black: #222330;
+  --color-black-80: rgba(0, 0, 0, 0.8);
+  --color-black-60: rgba(0, 0, 0, 0.6);
+  --color-black-30: rgba(0, 0, 0, 0.3);
+  --color-grey-light: #CCC;
+  --color-white: #FFF;
+  --font-size-text: 16px;
+  --baseline: 8px;
+  --baseline2: 16px;
+  --baseline3: 24px;
+  --baseline4: 32px;
+  --baseline5: 40px;
+  font-style: initial;
+  font-weight: initial;
+  font-family: var(--font-family, sans-serif);
+}
+
+.ck-tabs {
+  width: 100%;
+  display: block;
+  margin: auto;
+}
+
+.ck-tabs__header-tab-list {
+  list-style: none;
+  display: flex;
+  padding-left: 0;
+  border-bottom: 1px solid var(--color-grey-light);
+}
+
+
+.ck-tabs__header-tab-item {
+  padding: 0 var(--baseline3) 0 var(--baseline3);
+  border-bottom: 1px solid var(--color-grey-light);
+  margin-bottom: -1px;
+  cursor: pointer;
+  position: relative;
+  font-size: var(--font-size-text);
+  position: relative;
+}
+
+.ck-tabs__header-icon {
+  height: 0;
+  width: 0;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.ck-tabs__header-tab-item.active {
+  border-bottom: 2px solid var(--color-blue);
+  color: var(--color-blue);
+  font-weight: bold;
+  cursor: default;
+}
+
+.ck-tabs__header-tab-item.active .ck-tabs__header-icon {
+  width: var(--baseline2);
+  height: var(--baseline2);
+}
+
+.ck-tabs__header-tab-item.active:hover .ck-tabs__header-icon {
+  opacity: 1;
+  visibility: visible;
+}
+
+.ck-tabs__header-tab-item.default:before {
+  content: '*';
+  margin-right: 5px;
+  font-size: 19px;
+  height: var(--baseline2);
+  position: absolute;
+  left: 5px;
+  top: 0;
+}
+
+.ck-tabs__header-tab-add {
+  margin-left: var(--baseline3);
+  cursor: pointer;
+  height: 20px;
+  width: 20px;
+  background-color: var(--color-black-80);
+  text-align: center;
+  color: var(--color-white);
+  border-radius: 50%;
+  transition: background-color 0.35s ease;
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.ck-tabs__header-tab-add::before {
+  content: '+';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -54%)
+}
+
+.ck-tabs__header-tab-add:hover {
+  background-color: var(--color-blue);
+}
+
+::slotted(*) {
+  display: block;
+  width: 100%;
+  flex-shrink: 0;
+}

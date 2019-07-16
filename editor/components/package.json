@@ -1,0 +1,64 @@
+{
+  "name": "@amazee/editor-components",
+  "version": "1.0.0",
+  "description": "Components for CKEditor 5",
+  "main": "index.js",
+  "scripts": {
+    "storybook": "start-storybook -p 9001",
+    "lint": "eslint --quiet '**/*.js'",
+    "lint:fix": "eslint --fix '**/*.js'",
+    "build-storybook": "build-storybook",
+    "deploy-storybook": "storybook-to-ghpages"
+  },
+  "keywords": [
+    "ckeditor5",
+    "lit-element",
+    "storybook"
+  ],
+  "author": "AmazeeLabs (https://www.amazeelabs.com/)",
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://github.com/AmazeeLabs/editor-components",
+  "bugs": "https://github.com/AmazeeLabs/editor-components/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AmazeeLabs/editor-components.git"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "@storybook/addon-notes": "^5.0",
+    "@storybook/storybook-deployer": "^2.8.1",
+    "babel-loader": "^8.0.5",
+    "babel-preset-es2017": "^6.24.1",
+    "eslint": "^5.3.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^4.0.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "husky": "^1.3.1",
+    "lint-staged": "^8.1.0",
+    "prettier": "1.16.2",
+    "raw-loader": "^1.0.0",
+    "webpack-cli": "^3.2.3"
+  },
+  "lint-staged": {
+    "**/*.js": [
+      "eslint --quiet"
+    ]
+  },
+  "eslintIgnore": [
+    "src/lib/**",
+    "packages/**"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "dependencies": {
+    "@storybook/html": "^5.0",
+    "lit-element": "2.0.1",
+    "lit-html": "^1.0.0",
+    "global": "latest"
+  }
+}
