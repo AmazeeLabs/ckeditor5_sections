@@ -24,8 +24,8 @@ class MentionProviderPluginManager extends DefaultPluginManager {
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
     parent::__construct('Plugin/MentionProvider', $namespaces, $module_handler, 'Drupal\ckeditor5_sections\MentionProvider\MentionProviderInterface', 'Drupal\ckeditor5_sections\Annotation\MentionProvider');
-    $this->alterInfo('ckeditor5_sections_section_validation_plugin_info');
-    $this->setCacheBackend($cache_backend, 'ckeditor5_sections_section_validation_plugin');
+    $this->alterInfo('ckeditor5_sections_section_mention_plugin_info');
+    $this->setCacheBackend($cache_backend, 'ckeditor5_sections_section_mention_plugin');
   }
 
 }
