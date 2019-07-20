@@ -763,9 +763,9 @@
           <slot></slot>
         </div>
       </div>
-    `}});o.a.customElements.define("ck-select",class extends jt{static get properties(){return{options:{type:String,attribute:"ck-options"},defaultValue:{type:String},selected:{type:String,attribute:"data-selected"},isOpen:{type:Boolean},label:{type:String,attribute:"ck-label"}}}constructor(){super(),this.isOpen=!1,this.options=""}connectedCallback(){super.connectedCallback(),document.addEventListener("click",t=>{!this.contains(t.target)&&this.isOpen&&(this.isOpen=!1)})}handleClick(){this.isOpen?this.isOpen=!1:this.isOpen=!0}selectItem(t){this.modifyDocument(e=>{e.attributes(this,{"data-selected":t.target.innerText})}),this.isOpen=!1}render(){const t=this.options.split(",").map(t=>B`
+    `}});o.a.customElements.define("ck-select",class extends jt{static get properties(){return{options:{type:String,attribute:"ck-options"},defaultValue:{type:String},selected:{type:String,attribute:"data-selected"},isOpen:{type:Boolean},label:{type:String,attribute:"ck-label"}}}constructor(){super(),this.isOpen=!1,this.options=""}connectedCallback(){super.connectedCallback(),document.addEventListener("click",t=>{!this.contains(t.target)&&this.isOpen&&(this.isOpen=!1)})}handleClick(){this.isOpen?this.isOpen=!1:this.isOpen=!0}selectItem(t){this.modifyDocument(e=>{e.attributes(this,{"data-selected":t.target.innerText})}),this.isOpen=!1}deselectItem(t){this.modifyDocument(t=>{t.attributes(this,{"data-selected":null})}),this.isOpen=!1}render(){const t=this.options.split(",").map(t=>B`
         <li @click=${this.selectItem}>${t}</li>
-      `);return B`
+      `);return t.unshift(B`<li @click=${this.deselectItem}>- Select option -</li>`),B`
       <div class="select-wrapper">
         <div class="label">${this.label}</div>
         <div class="selected" @click=${this.handleClick}>

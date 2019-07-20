@@ -47,12 +47,22 @@ export default class Select extends EditorElement {
     this.isOpen = false;
   }
 
+  deselectItem(e) {
+    this.modifyDocument(editor => {
+      editor.attributes(this, {
+        "data-selected": null
+      });
+    });
+    this.isOpen = false;
+  }
+
   render() {
     const options = this.options.split(",").map(
       item => html`
         <li @click=${this.selectItem}>${item}</li>
       `
     );
+    options.unshift(html`<li @click=${this.deselectItem}>- Select option -</li>`);
     return html`
       <div class="select-wrapper">
         <div class="label">${this.label}</div>
