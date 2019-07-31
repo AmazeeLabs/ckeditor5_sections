@@ -36,7 +36,8 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
 
     // Render checkboxes for all rows.
     $form[$this->options['id']]['#tree'] = TRUE;
-    $return_type = \Drupal::request()->query->get('return_type');
+    $query = \Drupal::request()->query;
+    $return_type = $query->get('return_type');
     foreach ($this->view->result as $row_index => $row) {
       $entity = $this->getEntity($row);
       $form[$this->options['id']][$row_index] = [
@@ -70,6 +71,7 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
     if ($return_type) {
       $query['return_type'] = $return_type;
     }
+
     $form['actions']['submit']['#ajax'] = [
       'url' => Url::fromUserInput($url),
       'options' => [
@@ -95,21 +97,21 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
    */
   public static function updateWidget(array &$form, FormStateInterface $form_state, Request $request) {
     $field_id = $form_state->getTriggeringElement()['#field_id'];
-
-    $response = new AjaxResponse();
-    $response->addCommand(new CloseDialogCommand());
-
-    $request->query->set('media_library_opener_id', 'media_library.opener.sections');
-    $query = $request->query;
-    $state = MediaLibraryState::create(
-      $query->get('media_library_opener_id'),
-      $query->get('media_library_allowed_types', []),
-      $query->get('media_library_selected_type'),
-      $query->get('media_library_remaining'),
-      $query->get('media_library_opener_parameters', [
-        'field_widget_id' => $query->get('field_id'),
-      ])
-    );
+    if (!$request->query->get('media_library_opener_id')) {
+      $query = $request->query;
+      $state = MediaLibraryState::create(
+        'media_library.opener.sections',
+        $query->get('media_library_allowed_types', []),
+        $query->get('media_library_selected_type'),
+        $query->get('media_library_remaining'),
+        $query->get('media_library_opener_parameters', [
+          'field_widget_id' => $query->get('field_id'),
+        ])
+      );
+    }
+    else {
+      $state = MediaLibraryState::fromRequest($request);
+    }
 
     if ($request->get('content_library_widget_id')) {
       $optionId = $form_state->getTriggeringElement()['#option_id'];
