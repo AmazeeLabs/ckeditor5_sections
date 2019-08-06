@@ -135,6 +135,7 @@ class DocumentMerge implements DocumentMergeInterface {
           if ($currentNode->matchAttributes($leftNode) && $currentNode->matchContent($leftNode)) {
             $clonedTree = Tree::cloneSubtree($currentNode);
             $this->resultTree->addNode($clonedTree->getRoot(), $resultParent);
+            $nextResultParent = $clonedTree->getRoot();
           }
           else {
             // We have a conflict between left and right.
@@ -145,6 +146,7 @@ class DocumentMerge implements DocumentMergeInterface {
               $id = 'conflict-' . $currentNode->getId();
               $conflictNode = $this->createConflictNode($id, $currentNode->getDomNode()->ownerDocument, $sourceNode, $leftNode, $currentNode);
               $this->resultTree->addNode($conflictNode, $resultParent);
+              $nextResultParent = $conflictNode;
             }
             else {
               // Pretty unlikely to happen, the case when both, left and right,
@@ -152,6 +154,7 @@ class DocumentMerge implements DocumentMergeInterface {
               $id = 'conflict-' . $currentNode->getId();
               $conflictNode = $this->createConflictNode($id, $this->sourceTree->getRoot()->getDomNode()->ownerDocument, $leftNode, $currentNode);
               $this->resultTree->addNode($conflictNode, $resultParent);
+              $nextResultParent = $conflictNode;
             }
           }
           // In any of the cases, the left node and its branch should be marked
@@ -192,11 +195,13 @@ class DocumentMerge implements DocumentMergeInterface {
                 $clonedTree = Tree::cloneSubtree($leftNode);
                 $clonedTree->getRoot()->flag('added', 'left');
                 $this->resultTree->addNode($clonedTree->getRoot(), $resultParent);
+                $nextResultParent = $clonedTree->getRoot();
               }
               elseif ($leftNode->matchAttributes($sourceNode)) {
                 $clonedTree = Tree::cloneSubtree($currentNode);
                 $clonedTree->getRoot()->flag('added', 'right');
                 $this->resultTree->addNode($clonedTree->getRoot(), $resultParent);
+                $nextResultParent = $clonedTree->getRoot();
               }
               else {
                 $id = 'conflict-' . $leftNode->getId() . '-' . $currentNode->getId();
@@ -455,7 +460,8 @@ class DocumentMerge implements DocumentMergeInterface {
    *   The conflict node.
    */
   protected function createConflictNode($id, \DOMDocument $document, TreeNode $source = NULL, TreeNode $left = NULL, TreeNode $right = NULL) {
-    if (!empty($left) && $left->getDomNode()->hasAttribute('link-target')) {
+    if ((!empty($left) && $left->getDomNode()->hasAttribute('link-target'))
+      || (!empty($right) && $right->getDomNode()->hasAttribute('link-target'))) {
       $domNode = $document->importNode($left->getDomNode(), TRUE);
       $node = new TreeNode($id, $domNode);
       $node->flag('link-conflict', TRUE);
@@ -490,7 +496,6 @@ class DocumentMerge implements DocumentMergeInterface {
 
     $domNode = $document->createElement('ck-conflict-text');
     $node = new TreeNode($id, $domNode);
-
     $node->flag('conflict', TRUE);
     if (!empty($source)) {
       $node->flag('source', $source);
