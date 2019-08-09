@@ -7,5 +7,8 @@ dependencies:
   - linkit
   - media_library
 
+test_dependencies:
+  - media:media
+
 ckeditor5_sections_builds:
   - ckeditor5_sections/editor_build
