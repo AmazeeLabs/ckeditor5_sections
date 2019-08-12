@@ -401,30 +401,23 @@ class DocumentConverter implements DocumentConverterInterface {
               if ($item_field_definition->getPropertyDefinition($attributeName)) {
                 $item_field_data->set($attributeName, $node->getAttribute($attribute->nodeName));
               }
-              if ($attributeName == 'data-media-type') {
-                $entityType = $node->getAttribute($attribute->nodeName);
+              if ($attributeName == 'data-media-uuid') {
+                // Support for media entities.
+                $entities = $this->entityTypeManager
+                  ->getStorage('media')
+                  ->loadByProperties([
+                    'uuid' => $node->getAttribute('data-media-uuid'),
+                  ]);
+                $media = reset($entities);
+                if (!$media) {
+                  // FALSE can break GraphQL. NULL is safer.
+                  $media = NULL;
+                }
+                $item_field_data->set('entity', $media);
               }
             }
 
             $new_parent = $item_field_data;
-          }
-          elseif (strpos($value['item_type'], 'entity:') === 0) {
-            $entity_type_id = substr($value['item_type'], strlen('entity:'));
-            // Support media entities.
-            try {
-              $entities = $this->entityTypeManager
-                ->getStorage($entity_type_id)
-                ->loadByProperties([
-                  'uuid' => $node->getAttribute('data-media-uuid'),
-                ]);
-              $item_field_data = reset($entities);
-              if (!$item_field_data) {
-                $item_field_data = NULL;
-              }
-            }
-            catch (\Exception $e) {
-              $item_field_data = NULL;
-            }
           }
           else {
             // If the field is just a simple (scalar) field, then we just dump

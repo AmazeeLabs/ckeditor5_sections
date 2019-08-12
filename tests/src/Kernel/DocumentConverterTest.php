@@ -38,6 +38,7 @@ class DocumentConverterTest extends KernelTestBase {
   protected function setUp() {
     parent::setUp();
     $this->installConfig(['ckeditor5_sections']);
+    $this->installEntitySchema('media');
   }
 
   /**
