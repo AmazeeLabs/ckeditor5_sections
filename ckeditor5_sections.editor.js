@@ -191,9 +191,6 @@
       };
 
       var editorObject = event.detail;
-      if (editorObject['link-target']) {
-        editorObject['link-target'] = editorObject['link-target'].split('#')[0];
-      }
 
       editorObject['href'] = editorObject['link-target'];
 
