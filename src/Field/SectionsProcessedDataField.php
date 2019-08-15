@@ -23,6 +23,9 @@ class SectionsProcessedDataField extends TypedData {
     $filterFormat = $item->getFieldDefinition()->getSetting('filter_format');
 
     if ($filterFormat) {
+      /** @var \Drupal\Core\Render\Renderer $renderer */
+      $renderer = \Drupal::service('renderer');
+
       $build = [
         '#type' => 'processed_text',
         '#text' => $text,
@@ -30,13 +33,10 @@ class SectionsProcessedDataField extends TypedData {
         '#filter_types_to_skip' => [],
         '#langcode' => $item->getLangcode(),
       ];
-      // Capture the cacheability metadata associated with the processed text.
-      // TODO: Handle caching properly?
-      /** @var \Drupal\Core\Render\Renderer $renderer */
-      $renderer = \Drupal::service('renderer');
 
+      // Capture the cacheability metadata associated with the processed text.
       $text = $renderer->executeInRenderContext($renderContext, function () use (&$build, $renderer) {
-        // Set the entity in token_filter's static cache.
+        // Put the entity into the token_filter's static cache.
         $entity = &drupal_static('token_filter_entity');
         $entity = $this->getParentEntity();
         return $renderer->render($build, TRUE);
@@ -76,7 +76,6 @@ class SectionsProcessedDataField extends TypedData {
    * @return \Drupal\Core\Entity\EntityInterface
    */
   protected function getParentEntity() {
-    $entity = NULL;
     $parent = $this;
 
     while ($parent && !$parent instanceof EntityAdapter) {
