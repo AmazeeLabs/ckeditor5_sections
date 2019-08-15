@@ -3,6 +3,8 @@
 namespace Drupal\ckeditor5_sections\Field;
 
 use Drupal\ckeditor5_sections\DocumentSection;
+use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
+use Drupal\Core\Render\RenderContext;
 use Drupal\Core\TypedData\TypedData;
 
 /**
@@ -14,6 +16,7 @@ class SectionsProcessedDataField extends TypedData {
    * {@inheritdoc}
    */
   public function getValue() {
+    $renderContext = new RenderContext();
     $item = $this->getParent();
     $text = $item->json;
 
@@ -29,9 +32,16 @@ class SectionsProcessedDataField extends TypedData {
       ];
       // Capture the cacheability metadata associated with the processed text.
       // TODO: Handle caching properly?
-      $text = \Drupal::service('renderer')->renderPlain($build);
-    }
+      /** @var \Drupal\Core\Render\Renderer $renderer */
+      $renderer = \Drupal::service('renderer');
 
+      $text = $renderer->executeInRenderContext($renderContext, function () use (&$build, $renderer) {
+        // Set the entity in token_filter's static cache.
+        $entity = &drupal_static('token_filter_entity');
+        $entity = $this->getParentEntity();
+        return $renderer->render($build, TRUE);
+      });
+    }
 
     /* @var \Drupal\ckeditor5_sections\DocumentConverterInterface $parser */
     $sections = DocumentSection::fromValue(json_decode($text, TRUE));
@@ -39,10 +49,16 @@ class SectionsProcessedDataField extends TypedData {
     // Invoke alter hooks before returning data.
     if ($sections) {
       \Drupal::moduleHandler()->alter('section_data', $sections, $item);
+      if (!$renderContext->isEmpty() && $cacheableMetadata = $renderContext->pop()) {
+        $sections->addCacheableDependency($cacheableMetadata);
+      }
     }
     return $sections;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public function setValue($value, $notify = TRUE) {
     if ($value) {
       if (is_array($value)) {
@@ -54,5 +70,22 @@ class SectionsProcessedDataField extends TypedData {
     }
   }
 
+  /**
+   * Returns the parent entity.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface
+   */
+  protected function getParentEntity() {
+    $entity = NULL;
+    $parent = $this;
+
+    while ($parent && !$parent instanceof EntityAdapter) {
+      $parent = $parent->getParent();
+    }
+
+    if ($parent instanceof EntityAdapter) {
+      return $parent->getEntity();
+    }
+  }
 
 }

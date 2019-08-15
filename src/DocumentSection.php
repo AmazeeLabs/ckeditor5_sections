@@ -2,12 +2,14 @@
 
 namespace Drupal\ckeditor5_sections;
 
+use Drupal\Core\Cache\CacheableMetadata;
+
 /**
  * Class DocumentSection.
  *
  * Typed wrapper class for section data.
  */
-class DocumentSection implements DocumentSectionInterface {
+class DocumentSection extends CacheableMetadata implements DocumentSectionInterface {
 
   /**
    * The section type.
