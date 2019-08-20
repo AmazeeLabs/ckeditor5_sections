@@ -21,6 +21,15 @@ class Tree implements TreeInterface {
   ];
 
   /**
+   * Blocks blacklist by classname.
+   *
+   * @var array
+   */
+  static protected $blacklistClasses = [
+    'mention',
+  ];
+
+  /**
    * {@inheritdoc}
    */
   public function addNode(TreeNode $node, TreeNode $parent = NULL) {
@@ -110,7 +119,10 @@ class Tree implements TreeInterface {
         // Process everything that has a class.
         // TODO: Find a more solid approach. This won't hold for media elements
         // or formatted content that contains classes.
-        if ($child instanceof \DOMElement && ($child->hasAttribute('class') && !in_array($child->tagName, self::$blacklist))) {
+        if ($child instanceof \DOMElement
+          && ($child->hasAttribute('class')
+            && !in_array($child->getAttribute('class'), self::$blacklistClasses)
+            && !in_array($child->tagName, self::$blacklist))) {
           $identifier = self::getIdentifierForNode($child);
           // Prepend the identifier of the parent. If we want to be able to
           // detect movements between different tree branches, then we should
