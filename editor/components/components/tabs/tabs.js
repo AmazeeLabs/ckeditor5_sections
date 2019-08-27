@@ -111,10 +111,10 @@ export default class Tabs extends EditorElement {
     return html`
       <style>
         ::slotted(*) {
-          display: none !important;
+          display: none;
         }
         ::slotted(:nth-child(${this.currentTab + 1})) {
-          display: block !important;
+          display: block;
         }
         ${styles}
       </style>
