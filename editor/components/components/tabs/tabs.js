@@ -36,7 +36,6 @@ export default class Tabs extends EditorElement {
 
     const observer = new MutationObserver(() => this.processItems());
     observer.observe(this, {
-      attributes: true,
       childList: true,
       subtree: true
     });
@@ -66,7 +65,6 @@ export default class Tabs extends EditorElement {
           index
         };
       });
-    this.setTabsItem(this.currentTab);
     this.numberOfChildren = Array.from(this.children).filter(
       node => node.nodeName !== "BR"
     ).length;
@@ -105,6 +103,7 @@ export default class Tabs extends EditorElement {
     this.modifyDocument(editor =>
       editor.insert(event.detail.section, this, "end")
     );
+    this.setCurrentTab(Array.from(this.children).length - 1);
   }
 
   render() {
@@ -113,7 +112,7 @@ export default class Tabs extends EditorElement {
         ::slotted(*) {
           display: none;
         }
-        ::slotted(:nth-child(${this.currentTab + 1})) {
+        ::slotted(.active) {
           display: block;
         }
         ${styles}
@@ -179,6 +178,7 @@ export default class Tabs extends EditorElement {
       );
       if (this.currentTab === this.items.length - 1) {
         this.currentTab -= 1;
+        this.setCurrentTab(this.currentTab);
       }
     }
   }
@@ -187,11 +187,21 @@ export default class Tabs extends EditorElement {
     if (this.children.length <= index || !this.children[index]) {
       return;
     }
+    this.setCurrentTab(index);
     this.currentTab = index;
   }
 
   addItem() {
+    this.setCurrentTab(this.items.length);
     this.currentTab = this.items.length;
+  }
+
+  setCurrentTab(index) {
+    const children = Array.from(this.children);
+    children.forEach((item) => item.classList.remove('active'));
+    if (children[index]) {
+      Array.from(this.children)[index].classList.add('active');
+    }
   }
 
   updateItem(item) {
