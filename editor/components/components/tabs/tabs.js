@@ -224,6 +224,7 @@ export default class Tabs extends EditorElement {
           )
         );
     }
+    this.processItems();
   }
 }
 
