@@ -81,26 +81,27 @@ class SectionsMediaLibraryUploadForm extends FileUploadForm {
   /**
    * {@inheritdoc}
    */
-  public function updateWidget(array &$form, FormStateInterface $formState) {
-    if ($formState::hasAnyErrors()) {
+  public function updateWidget(array &$form, FormStateInterface $form_state) {
+    if ($form_state::hasAnyErrors()) {
       return $form;
     }
 
-    $opener_id = $this->getMediaLibraryState($formState)->getOpenerId();
-    if ($field_id = MediaLibraryWidget::getOpenerFieldId($opener_id)) {
-      $return_type = $this->getRequest()->query->get('return_type');
-      $current_media_ids = array_map(function (MediaInterface $media) use ($return_type) {
-        if ($return_type == 'uuid') {
-          return $media->uuid();
-        }
-        return $media->id();
-      }, $this->getCurrentMediaItems($formState));
-      // Pass the selection to the field widget based on the current widget ID.
-      return (new AjaxResponse())
-        ->addCommand(new InvokeCommand("[data-media-library-widget-value=\"$field_id\"]", 'val', [implode(',', $current_media_ids)]))
-        ->addCommand(new InvokeCommand("[data-media-library-widget-update=\"$field_id\"]", 'trigger', ['mousedown']))
-        ->addCommand(new CloseDialogCommand());
-    }
+    // The added media items get an ID when they are saved in ::submitForm().
+    // For that reason the added media items are keyed by delta in the form
+    // state and we have to do an array map to get each media ID.
+    $return_type = $this->getRequest()->query->get('return_type');
+    $current_media_ids = array_map(function (MediaInterface $media) use ($return_type) {
+      if ($return_type == 'uuid') {
+        return $media->uuid();
+      }
+      return $media->id();
+    }, $this->getCurrentMediaItems($form_state));
+
+    // Allow the opener service to respond to the selection.
+    $state = $this->getMediaLibraryState($form_state);
+    return $this->openerResolver->get($state)
+      ->getSelectionResponse($state, $current_media_ids)
+      ->addCommand(new CloseDialogCommand());
   }
 
 }
