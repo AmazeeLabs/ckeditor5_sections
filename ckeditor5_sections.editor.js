@@ -87,7 +87,8 @@
       var sections = Object.keys(editorSettings.templates).map(id => ({
         id: id,
         label: editorSettings.templates[id].label,
-        icon: editorSettings.templates[id].icon
+        icon: editorSettings.templates[id].icon,
+        svgIcon: editorSettings.templates[id].svgIcon,
       }));
       event.respond(sections)
     });

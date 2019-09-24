@@ -166,6 +166,7 @@ class DocumentConverter implements DocumentConverterInterface {
         $value = $section->get($prop);
         $prop_value = Html::normalize($value);
         $fragment = new \DOMDocument('', 'UTF-8');
+        libxml_use_internal_errors(TRUE);
         $fragment->loadHTML('<?xml encoding="utf-8" ?><div>' . $prop_value . '</div>');
         foreach ($el->childNodes as $child) {
           $el->removeChild($child);
