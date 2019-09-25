@@ -80,6 +80,26 @@
       if (values.attributes.fragment && values.attributes.fragment !== '_none') {
         values.attributes.href += '#' + values.attributes.fragment;
       }
+      // In case the user just opened the linkit dialog and then just hit the
+      // save button without updating the link href, then the data attributes
+      // (entity type, uuid and subtitution) are left empty. In this case, they
+      // will be removed from the original link (see the Linkit ckeditor5
+      // plugin). To prevent this, we flag them so that they can be ignored
+      // instead of being removed. If the original value and the current value
+      // of the href field are equal, then we may need to ignore the data
+      // attributes.
+      var originalHref = $('form.editor-link-dialog input[name="attributes[href]"]').prop('defaultValue');
+      if (originalHref && values.attributes.href == originalHref) {
+        if (!values.attributes['data-entity-type']) {
+          values.attributes['data-entity-type'] = '_ignore';
+        }
+        if (!values.attributes['data-entity-uuid']) {
+          values.attributes['data-entity-uuid'] = '_ignore';
+        }
+        if (!values.attributes['data-entity-substitution']) {
+          values.attributes['data-entity-substitution'] = '_ignore';
+        }
+      }
       currentCallback(values.attributes);
     });
 
@@ -87,7 +107,8 @@
       var sections = Object.keys(editorSettings.templates).map(id => ({
         id: id,
         label: editorSettings.templates[id].label,
-        icon: editorSettings.templates[id].icon
+        icon: editorSettings.templates[id].icon,
+        svgIcon: editorSettings.templates[id].svgIcon,
       }));
       event.respond(sections)
     });
