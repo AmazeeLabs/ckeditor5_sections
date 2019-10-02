@@ -3,27 +3,32 @@
   "sections": [
     {
       "__type": "image",
+      "id": "",
       "content": {
         "__type": "media",
         "data-media-type": "image",
-        "data-media-uuid": "123"
+        "data-media-uuid": "123",
+        "entity": null
       },
       "caption": "Caption"
     },
     {
       "__type": "text",
+      "id": "",
       "headline": "Headline",
       "content": "Content"
     },
     {
       "__type": "teaser",
-      "headline": "Title",
+      "id": "",
+      "headline": "",
       "data-layout": "test",
       "text": "<p>This is the content.</p>",
       "image": {
         "__type": "teaser-image",
         "data-media-type": "media:image",
-        "data-media-uuid": "123"
+        "data-media-uuid": "123",
+        "entity": null
       },
       "link": {
         "__type": "button",

@@ -1,24 +1,25 @@
 # Schema for the configuration files of the CKEditor module.
+field.field_settings.sections:
+  type: mapping
+  label: 'Sections settings'
+  mapping:
+    template:
+      type: string
+      label: 'Main Template'
+    filter_format:
+      type: string
+      label: 'JSON filter format'
 
 editor.settings.ckeditor5_sections:
   type: mapping
   label: 'CKEditor5 Sections settings'
   mapping:
-    templateDirectory:
-      type: string
-      label: 'Template directory'
-    rootElement:
-      type: string
-      label: 'Root element'
     editorBuild:
       type: string
       label: 'Root element'
-    enabledSections:
-      type: sequence
-      label: 'Enabled sections'
-      sequence:
-        type: string
-        label: 'Enabled section'
+    advanced:
+      type: string
+      label: 'Advanced settings'
     plugins:
       type: mapping
       label: 'Plugins'

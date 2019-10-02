@@ -32,3 +32,14 @@ ckeditor5_sections.content.preview:
   requirements:
     # TODO: proper access handling
     _permission: 'access content'
+
+ckeditor5_sections.mention.feed:
+  path: '/sections/mention/{mention_provider_id}'
+  defaults:
+    _controller: '\Drupal\ckeditor5_sections\Controller\MentionProviderController::query'
+    options:
+      parameters:
+        mention_provider_id:
+          type: string
+  requirements:
+    _custom_access: '\Drupal\ckeditor5_sections\Controller\MentionProviderController::access'

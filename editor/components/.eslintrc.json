@@ -1,0 +1,19 @@
+{
+  "extends": [
+    "airbnb-base",
+    "plugin:prettier/recommended"
+  ],
+  "globals": {
+    // Declare global variables to avoid "no-undef".
+    "module": false,
+    "customElements": false,
+    "document": false,
+    "Event": false,
+    "CustomEvent": false,
+    "MutationObverser": false
+  },
+  "rules": {
+    "no-unused-vars": ["warn"],
+    "class-methods-use-this": [1, { "exceptMethods": ["render"] }]
+  }
+}

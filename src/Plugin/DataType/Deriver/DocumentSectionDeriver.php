@@ -20,6 +20,7 @@ class DocumentSectionDeriver extends DeriverBase {
     foreach ($section_types as $section_type) {
       $this->derivatives[$section_type->getType()] = $base_plugin_definition;
     }
+    $this->derivatives['Section'] = $base_plugin_definition;
     return $this->derivatives;
   }
 

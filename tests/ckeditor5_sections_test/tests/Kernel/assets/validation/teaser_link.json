@@ -4,9 +4,10 @@
   "data-layout": "test",
   "text": "<p>This is the content.</p>",
   "image": {
-    "__type": "teaser-image",
+    "__type": "teaser_image",
     "data-media-type": "image",
-    "data-media-uuid": "123"
+    "data-media-uuid": "123",
+    "entity": null
   },
   "link": {
     "__type": "button",

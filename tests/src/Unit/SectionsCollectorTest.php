@@ -55,7 +55,7 @@ namespace Drupal\Tests\ckeditor5_sections\Unit {
       parent::setUp();
       $this->entityTypeManager = $this->createMock('Drupal\Core\Entity\EntityTypeManagerInterface');
       $this->twigProcessor = $this->createMock('Drupal\ckeditor5_sections\TwigProcessor');
-      $this->sectionsCollector = new SectionsCollector($this->entityTypeManager, $this->twigProcessor);
+      $this->sectionsCollector = new SectionsCollector($this->entityTypeManager, $this->twigProcessor, realpath(__DIR__ . '/../../ckeditor5_sections_test/templates'));
     }
 
     /**

@@ -35,6 +35,7 @@ class SectionsCollectorTest extends KernelTestBase {
     'locale',
     'serialization',
     'system',
+    'linkit',
     'user',
   ];
 

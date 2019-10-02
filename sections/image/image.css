@@ -2,6 +2,16 @@
   position: relative;
 }
 
+.image .field--type-image img {
+  margin: 0;
+  display: block;
+}
+
+.image .field--type-image {
+  float: none !important;
+  margin: 0 !important;
+}
+
 .image__caption {
   position: absolute;
   bottom: 1em;

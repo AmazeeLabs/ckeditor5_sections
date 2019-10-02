@@ -1,0 +1,15 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - ckeditor5_sections_test
+name: 'CKEditor5 Sections Data Test'
+format: sections_data_test
+weight: -8
+filters:
+  sections_json_test:
+    id: sections_json_test
+    provider: ckeditor5_sections_test
+    status: true
+    weight: 0
+    settings: {  }

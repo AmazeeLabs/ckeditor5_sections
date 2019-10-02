@@ -27,11 +27,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "ckeditor5_sections",
  *   label = @Translation("CKEditor5 Sections"),
  *   supports_content_filtering = FALSE,
- *   supports_inline_editing = TRUE,
- *   is_xss_safe = FALSE,
+ *   supports_inline_editing = FALSE,
+ *   is_xss_safe = TRUE,
  *   supported_element_types = {
  *     "textarea",
- *     "textfield",
  *   }
  * )
  */
@@ -149,9 +148,6 @@ class CKEditor5Sections extends EditorBase implements ContainerFactoryPluginInte
    */
   public function getDefaultSettings() {
     return [
-      'templateDirectory' => '',
-      'rootElement' => '',
-      'enabledSections' => [],
       'editorBuild' => 'ckeditor5_sections/editor_build',
       'plugins' => [
         'drupallink' => [
@@ -168,52 +164,6 @@ class CKEditor5Sections extends EditorBase implements ContainerFactoryPluginInte
    */
   public function settingsForm(array $form, FormStateInterface $form_state, Editor $editor) {
     $settings = $editor->getSettings();
-    $defaultDir = drupal_get_path('module', 'ckeditor5_sections') . '/sections';
-    $form['templateDirectory'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Template directory'),
-      '#description' => $this->t('The directory that will be scanned for editor templates. If left empty, %dir is used.', ['%dir' => $defaultDir]),
-      '#default_value' => $settings['templateDirectory'],
-      '#ajax' => [
-        'disable-refocus' => 'true',
-        'callback' => [self::class, 'templateListAjax'],
-        'wrapper' => 'ckeditor5-sections-template-list',
-        'progress' => [
-          'type' => 'throbber',
-          'message' => t('Updating templates entry...'),
-        ],
-      ],
-    ];
-
-    $sections = $this->sectionsCollector->getSections($form_state->getValue(['editor', 'settings', 'templateDirectory'], $settings['templateDirectory']));
-    $form['rootElement'] = [
-      '#prefix' => '<div id="ckeditor5-sections-template-list">',
-      '#suffix' => '</div>',
-      '#type' => 'select',
-      '#title' => $this->t('Root Element'),
-      '#options' => ['__default' => t('Default Root Element')] + array_map(function ($section) {
-          return $section['label'];
-      }, $sections),
-      '#default_value' => $settings['rootElement'],
-    ];
-
-    $form['enabledSections'] = [
-      '#type' => 'checkboxes',
-      '#title' => t('Enabled sections'),
-      '#options' => array_map(function ($section) {
-        return $section['label'];
-      }, $sections),
-      '#default_value' => $settings['enabledSections'],
-      '#min' => 1,
-      '#states' => [
-        'required' => [
-          'select[name*="rootElement"]' => ['value' => '__default'],
-        ],
-        'visible' => [
-          'select[name*="rootElement"]' => ['value' => '__default'],
-        ],
-      ],
-    ];
 
     $builds = [];
     foreach (system_get_info('module') as $module) {
@@ -293,12 +243,6 @@ class CKEditor5Sections extends EditorBase implements ContainerFactoryPluginInte
     }
   }
 
-  public static function templateListAjax($form, FormStateInterface $form_state) {
-    $path = array_slice($form_state->getTriggeringElement()['#array_parents'], 0, -1);
-    $path[] = 'rootElement';
-    return NestedArray::getValue($form, $path);
-  }
-
   /**
    * {@inheritdoc}
    */
@@ -313,19 +257,6 @@ class CKEditor5Sections extends EditorBase implements ContainerFactoryPluginInte
   public function getJSSettings(Editor $editor) {
     $settings = $editor->getSettings();
     $sections = $this->sectionsCollector->getSections();
-    $enabledSections = array_filter(array_values($settings['enabledSections']));
-    $rootElement = $settings['rootElement'];
-
-    if ($rootElement == '__default') {
-      $sections['_root'] = [
-        'label' => $this->t('Document root'),
-        'template' => '<div class="root" ck-type="container" ck-contains="' . implode(' ', $enabledSections) . '"></div>',
-      ];
-      $settings['masterTemplate'] = '_root';
-    }
-    else {
-      $settings['masterTemplate'] = $rootElement;
-    }
 
     /** @var \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler */
     $moduleHandler = \Drupal::service('module_handler');

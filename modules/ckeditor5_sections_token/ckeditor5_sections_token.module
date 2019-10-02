@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Core functions for the ckeditor5_sections_token module.
+ */
+
+use Drupal\Core\Entity\ContentEntityInterface;
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function ckeditor5_sections_token_preprocess_field(array &$variables) {
+  if (isset($variables['element']['#object']) && $variables['element']['#object'] instanceof ContentEntityInterface) {
+    $entity = &drupal_static('ckeditor5_sections_token_filter_entity');
+    $entity = $variables['element']['#object'];
+  }
+}

@@ -7,14 +7,15 @@
         "type": "string"
       },
       "image": {
-        "type": "section:teaser-image",
+        "type": "section:teaser_image",
         "label": "image",
         "attributes": {
           "data-media-type": "media:image",
           "data-media-uuid": "",
           "itemprop": "image",
-          "itemtype": "teaser-image",
-          "class": "teaser__image"
+          "itemtype": "teaser_image",
+          "class": "teaser__image",
+          "entity": "entity:media"
         }
       },
       "headline": {
@@ -53,8 +54,8 @@
       "itemtype": "test_teaser"
     }
   },
-  "teaser-image": {
-    "type": "teaser-image",
+  "teaser_image": {
+    "type": "teaser_image",
     "fields": {
       "data-media-type": {
         "label": "data-media-type",
@@ -63,11 +64,15 @@
       "data-media-uuid": {
         "label": "data-media-uuid",
         "type": "string"
+      },
+      "entity": {
+        "label": "media Entity",
+        "type": "entity:media"
       }
     },
     "attributes": {
       "itemprop": "image",
-      "itemtype": "teaser-image",
+      "itemtype": "teaser_image",
       "class": "teaser__image"
     }
   },

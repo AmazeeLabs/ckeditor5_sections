@@ -2,27 +2,27 @@
   "__type": "test_page",
   "sections": [
     {
-      "__type": "text",
+      "__type": "test_text",
       "headline": "Headline",
       "content": "Content"
     },{
-      "__type": "text",
+      "__type": "test_text",
       "headline": "Headline",
       "content": "Content"
     },{
-      "__type": "text",
+      "__type": "test_text",
       "headline": "Headline",
       "content": "Content"
     },{
-      "__type": "text",
+      "__type": "test_text",
       "headline": "Headline",
       "content": "Content"
     },{
-      "__type": "text",
+      "__type": "test_text",
       "headline": "Headline",
       "content": "Content"
     },{
-      "__type": "text",
+      "__type": "test_text",
       "headline": "Headline",
       "content": "Content"
     }

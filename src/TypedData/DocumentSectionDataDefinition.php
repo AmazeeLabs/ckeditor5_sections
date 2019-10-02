@@ -87,8 +87,18 @@ class DocumentSectionDataDefinition extends MapDataDefinition {
             ->setLabel('Type');
           foreach ($section_types[$section_type]['fields'] as $field_name => $field) {
             if (!empty($field['cardinality']) && $field['cardinality'] === 'multiple') {
-              $this->propertyDefinitions[$field_name] = \Drupal::typedDataManager()->createListDataDefinition($field['type'])
+              $definition = \Drupal::typedDataManager()->createListDataDefinition('section:Section')
                 ->setLabel($field['label']);
+              // Store allowed types in  the list. TODO: validate this.
+              $types = $definition->getSetting('allowed_types');
+              if (!$types) {
+                $types = [];
+              }
+              if (!in_array($field['type'], $types)) {
+                $types[] = $field['type'];
+              }
+              $definition->setSetting('allowed_types', $types);
+              $this->propertyDefinitions[$field_name] = $definition;
             }
             else {
               $this->propertyDefinitions[$field_name] = \Drupal::typedDataManager()->createDataDefinition($field['type'])

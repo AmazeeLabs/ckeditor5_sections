@@ -24,6 +24,4 @@ editor:
 
 sections:
   css:
-    base:
-      sections/image/image.css: {}
-      sections/teaser/teaser.css: {}
+    base: {}

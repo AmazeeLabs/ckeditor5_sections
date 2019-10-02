@@ -1,0 +1,13 @@
+diff --git a/node_modules/@ckeditor/ckeditor5-mention/src/mentionui.js b/node_modules/@ckeditor/ckeditor5-mention/src/mentionui.js
+index dd0f126..84f5064 100644
+--- a/node_modules/@ckeditor/ckeditor5-mention/src/mentionui.js
++++ b/node_modules/@ckeditor/ckeditor5-mention/src/mentionui.js
+@@ -546,7 +546,7 @@ export function createRegExp( marker, minimumCharacters ) {
+ 	//
+ 	// The pattern matches up to the caret (end of string switch - $).
+ 	//               (0:      opening sequence       )(1:  marker   )(2:                typed mention                 )$
+-	const pattern = `(?:^|[ ${ openAfterCharacters }])([${ marker }])([_${ mentionCharacters }]${ numberOfCharacters })$`;
++	const pattern = `(?:^|[ ${ openAfterCharacters }])([${ marker }])([-:_${ mentionCharacters }]${ numberOfCharacters })$`;
+ 
+ 	return new RegExp( pattern, 'u' );
+ }

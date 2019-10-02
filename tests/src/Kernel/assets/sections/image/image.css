@@ -1,0 +1,12 @@
+.image {
+  position: relative;
+}
+
+.image__caption {
+  position: absolute;
+  bottom: 1em;
+  left: 1em;
+  max-width: 70%;
+  padding: 0.5em;
+  background: rgba(255, 255, 255, 0.8);
+}

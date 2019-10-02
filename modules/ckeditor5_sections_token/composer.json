@@ -1,0 +1,17 @@
+{
+  "name": "drupal/ckeditor5_sections",
+  "type": "drupal-module",
+  "description": "Integrates ckeditor mentions (inline autocompletion)",
+  "homepage": "http://drupal.org/project/ckeditor5_sections",
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    }
+  ],
+  "require": {
+    "drupal/token": "^1.0"
+  }
+}

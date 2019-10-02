@@ -79,7 +79,8 @@ class CKEditor5SectionsMediaFilter extends FilterBase implements ContainerFactor
       $document = Html::load($text);
       $xpath = new \DOMXPath($document);
 
-      foreach ($xpath->query('//div[@data-media-uuid]') as $node) {
+      foreach ($xpath->query('//*[@data-media-uuid]') as $node) {
+        /** @var \DOMElement $node */
         $media_uuid = $node->getAttribute('data-media-uuid');
         $display = $node->getAttribute('data-media-display');
         // Clear attributes and normalize.
@@ -104,8 +105,9 @@ class CKEditor5SectionsMediaFilter extends FilterBase implements ContainerFactor
         // Insert rendered media into the element.
         foreach ($updated_nodes as $updated_node) {
           $updated_node = $document->importNode($updated_node, TRUE);
-          $node->appendChild($updated_node);
+          $node->parentNode->insertBefore($updated_node, $node);
         }
+        $node->parentNode->removeChild($node);
       }
       $result->setProcessedText(Html::serialize($document));
     }

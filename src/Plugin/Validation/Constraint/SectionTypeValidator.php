@@ -14,7 +14,7 @@ class SectionTypeValidator extends ConstraintValidator {
    * {@inheritdoc}
    */
   public function validate($value, Constraint $constraint) {
-    if ($value['__type'] !== $constraint->type) {
+    if ($value['__type'] !== $constraint->type && $constraint->type !== 'Section') {
       $this->context->buildViolation('Invalid type provided')
         ->setInvalidValue($value)
         ->setCode(SectionTypeConstraint::INVALID_SECTION_TYPE)

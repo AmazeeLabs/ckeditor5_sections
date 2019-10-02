@@ -1,0 +1,8 @@
+name: 'CKEditor 5 Sections mentions'
+description: 'Provides mentions ("inline autocomplete")'
+type: module
+core: 8.x
+dependencies:
+  - ckeditor5_sections
+  - drupal:filter
+  - token:token

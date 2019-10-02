@@ -23,6 +23,13 @@ class SectionsCollector implements SectionsCollectorInterface, EventSubscriberIn
    */
   protected $twigProcessor;
 
+  /**
+   * The template directory to scan.
+   *
+   * @var string
+   */
+  protected $directory;
+
   protected $sections;
 
   /**
@@ -31,9 +38,14 @@ class SectionsCollector implements SectionsCollectorInterface, EventSubscriberIn
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    * @param \Drupal\ckeditor5_sections\TwigProcessor $twigProcessor
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, TwigProcessor $twigProcessor) {
+  public function __construct(
+    EntityTypeManagerInterface $entityTypeManager,
+    TwigProcessor $twigProcessor,
+    $directory
+  ) {
     $this->entityTypeManager = $entityTypeManager;
     $this->twigProcessor = $twigProcessor;
+    $this->directory = $directory ?: drupal_get_path('module', 'ckeditor5_sections') . '/sections';
   }
 
   /**
@@ -43,29 +55,30 @@ class SectionsCollector implements SectionsCollectorInterface, EventSubscriberIn
    *   An array of all the available sections.
    */
   public function getSections($directory = NULL) {
-    if ($directory) {
-      return $this->collectSectionsFromDirectory($directory);
-    }
     if (!isset($this->sections)) {
-
-      /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
-      $storage = $this->entityTypeManager->getStorage('editor');
-
-      /** @var Editor[] $editors */
-      $editors = $storage->loadByProperties([
-        'editor' => 'ckeditor5_sections',
-        'status' => TRUE,
-      ]);
-
-      /** @var \Drupal\ckeditor5_sections\SectionsCollectorInterface $collector */
-      $templates = [];
-      foreach ($editors as $editor) {
-        $templates = array_merge($templates, $this->collectSectionsFromDirectory($editor->getSettings()['templateDirectory']));
-      }
-
-      $this->sections = $templates;
+      $this->sections = $this->collectSectionsFromDirectory($directory ?: $this->directory);
     }
     return $this->sections;
+  }
+
+  /**
+   * Retrieve a list of all stylesheets.
+   * 
+   * @param string $directory
+   *   The directory to scan. Will default to the `sections` module.
+   * @return string[]
+   *   The list of css file paths.
+   */
+  public function getStyleSheets($directory = NULL) {
+    if (!$directory) {
+      $directory = drupal_get_path('module', 'ckeditor5_sections') . '/sections';
+    }
+    $files = file_scan_directory($directory, '/.*.css/');
+    $styleSheets = [];
+    foreach ($files as $file => $file_info) {
+      $styleSheets[] = $file_info->uri;
+    }
+    return $styleSheets;
   }
 
   /**

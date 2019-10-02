@@ -11,6 +11,7 @@ use Drupal\Core\Url;
 use Drupal\media_library\Plugin\views\field\MediaLibrarySelectForm;
 use Drupal\media_library\MediaLibraryState;
 use Drupal\media_library\Plugin\Field\FieldWidget\MediaLibraryWidget;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Defines a field that outputs a checkbox and form for selecting media.
@@ -88,37 +89,36 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
   /**
    * {@inheritdoc}
    */
-  public static function updateWidget(array &$form, FormStateInterface $form_state) {
+  public static function updateWidget(array &$form, FormStateInterface $form_state, Request $request) {
     $field_id = $form_state->getTriggeringElement()['#field_id'];
-
-    $response = new AjaxResponse();
-    $response->addCommand(new CloseDialogCommand());
-
-    $request = $form_state->get('view')->getRequest();
+    if (!$request->query->get('media_library_opener_id')) {
+      $query = $request->query;
+      $state = MediaLibraryState::create(
+        'media_library.opener.sections',
+        $query->get('media_library_allowed_types', []),
+        $query->get('media_library_selected_type'),
+        $query->get('media_library_remaining'),
+        $query->get('media_library_opener_parameters', [
+          'field_widget_id' => $query->get('field_id'),
+        ])
+      );
+    }
+    else {
+      $state = MediaLibraryState::fromRequest($request);
+    }
 
     if ($request->get('content_library_widget_id')) {
       $optionId = $form_state->getTriggeringElement()['#option_id'];
       $selected = array_filter($form_state->getValue($optionId, []));
-
-      $ids = implode(',', $selected);
-      $field_id = $request->get('content_library_widget_id');
     }
     else {
       $selected = array_filter(explode(',', $form_state->getValue($field_id, [])));
-
-      $ids = implode(',', $selected);
-
-      $opener_id = MediaLibraryState::fromRequest($request)->getOpenerId();
-      $field_id = MediaLibraryWidget::getOpenerFieldId($opener_id);
     }
 
-    if ($field_id) {
-      $response
-        ->addCommand(new InvokeCommand("[data-media-library-widget-value=\"$field_id\"]", 'val', [$ids]))
-        ->addCommand(new InvokeCommand("[data-media-library-widget-update=\"$field_id\"]", 'trigger', ['mousedown']));
-    }
-
-    return $response;
+    return \Drupal::service('media_library.opener_resolver')
+      ->get($state)
+      ->getSelectionResponse($state, $selected)
+      ->addCommand(new CloseDialogCommand());
   }
 
 }
