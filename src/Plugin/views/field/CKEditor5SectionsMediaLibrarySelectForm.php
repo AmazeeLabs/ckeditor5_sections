@@ -2,15 +2,13 @@
 
 namespace Drupal\ckeditor5_sections\Plugin\views\field;
 
-use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\ckeditor5_sections\SectionsMediaLibraryOpener;
 use Drupal\Core\Ajax\CloseDialogCommand;
-use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Url;
 use Drupal\media_library\Plugin\views\field\MediaLibrarySelectForm;
 use Drupal\media_library\MediaLibraryState;
-use Drupal\media_library\Plugin\Field\FieldWidget\MediaLibraryWidget;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -36,6 +34,7 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
 
     // Render checkboxes for all rows.
     $form[$this->options['id']]['#tree'] = TRUE;
+    $return_type = $this->getReturnType();
     foreach ($this->view->result as $row_index => $row) {
       $entity = $this->getEntity($row);
       $form[$this->options['id']][$row_index] = [
@@ -44,7 +43,7 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
           '@label' => $entity->label(),
         ]),
         '#title_display' => 'invisible',
-        '#return_value' => $entity->uuid(),
+        '#return_value' => $return_type == 'uuid' ? $entity->uuid() : $entity->id(),
       ];
     }
 
@@ -119,6 +118,35 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
       ->get($state)
       ->getSelectionResponse($state, $selected)
       ->addCommand(new CloseDialogCommand());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function viewsFormValidate(array &$form, FormStateInterface $form_state) {
+    $return_type = $this->getReturnType();
+
+    if ($return_type == 'uuid') {
+      $selected = $form_state->getValue($this->options['id'], []);
+    }
+    else {
+      $selected = array_filter($form_state->getValue($this->options['id']));
+    }
+    if (empty($selected)) {
+      $form_state->setErrorByName('', $this->t('No items selected.'));
+    }
+  }
+
+  /**
+   * Return the return type id.
+   *
+   * @return string
+   *   Either 'id' or 'uuid'.
+   */
+  protected function getReturnType() {
+    $query = $this->view->getRequest()->query->all();
+    $opener = \Drupal::service($query['media_library_opener_id']);
+    return $opener instanceof SectionsMediaLibraryOpener ? 'uuid' : 'id';
   }
 
 }
