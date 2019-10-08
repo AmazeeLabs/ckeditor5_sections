@@ -217,3 +217,21 @@ ck-media-loader {
   transform: scale(1.2);
   border: none;
 }
+
+.media-name {
+  background: rgba(0, 0, 0, 0.3);
+  bottom: 0;
+  position: absolute;
+  transition: all 0.4s;
+}
+
+.media-name:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.media-name a {
+  color: white;
+  display: block;
+  padding: 1em;
+  text-decoration: none;
+}
