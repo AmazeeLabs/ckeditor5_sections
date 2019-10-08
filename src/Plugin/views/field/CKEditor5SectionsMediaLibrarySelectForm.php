@@ -145,8 +145,10 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
    */
   protected function getReturnType() {
     $query = $this->view->getRequest()->query->all();
-    $opener = \Drupal::service($query['media_library_opener_id']);
-    return $opener instanceof SectionsMediaLibraryOpener ? 'uuid' : 'id';
+    if (!empty($query['media_library_opener_id'])) {
+      $opener = \Drupal::service($query['media_library_opener_id']);
+    }
+    return (!$opener || $opener instanceof SectionsMediaLibraryOpener) ? 'uuid' : 'id';
   }
 
 }
