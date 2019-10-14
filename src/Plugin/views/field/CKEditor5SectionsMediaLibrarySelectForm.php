@@ -2,15 +2,13 @@
 
 namespace Drupal\ckeditor5_sections\Plugin\views\field;
 
-use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\ckeditor5_sections\SectionsMediaLibraryOpener;
 use Drupal\Core\Ajax\CloseDialogCommand;
-use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Url;
 use Drupal\media_library\Plugin\views\field\MediaLibrarySelectForm;
 use Drupal\media_library\MediaLibraryState;
-use Drupal\media_library\Plugin\Field\FieldWidget\MediaLibraryWidget;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -36,8 +34,7 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
 
     // Render checkboxes for all rows.
     $form[$this->options['id']]['#tree'] = TRUE;
-    $query = \Drupal::request()->query;
-    $return_type = $query->get('return_type');
+    $return_type = $this->getReturnType();
     foreach ($this->view->result as $row_index => $row) {
       $entity = $this->getEntity($row);
       $form[$this->options['id']][$row_index] = [
@@ -68,10 +65,6 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
     $url = parse_url($form['#action'], PHP_URL_PATH);
     $query = $this->view->getRequest()->query->all();
     $query[FormBuilderInterface::AJAX_FORM_REQUEST] = TRUE;
-    if ($return_type) {
-      $query['return_type'] = $return_type;
-    }
-
     $form['actions']['submit']['#ajax'] = [
       'url' => Url::fromUserInput($url),
       'options' => [
@@ -131,7 +124,7 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
    * {@inheritdoc}
    */
   public function viewsFormValidate(array &$form, FormStateInterface $form_state) {
-    $return_type = \Drupal::request()->query->get('return_type');
+    $return_type = $this->getReturnType();
 
     if ($return_type == 'uuid') {
       $selected = $form_state->getValue($this->options['id'], []);
@@ -142,6 +135,20 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
     if (empty($selected)) {
       $form_state->setErrorByName('', $this->t('No items selected.'));
     }
+  }
+
+  /**
+   * Return the return type id.
+   *
+   * @return string
+   *   Either 'id' or 'uuid'.
+   */
+  protected function getReturnType() {
+    $query = $this->view->getRequest()->query->all();
+    if (!empty($query['media_library_opener_id'])) {
+      $opener = \Drupal::service($query['media_library_opener_id']);
+    }
+    return (!$opener || $opener instanceof SectionsMediaLibraryOpener) ? 'uuid' : 'id';
   }
 
 }
