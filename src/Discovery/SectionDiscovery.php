@@ -148,13 +148,11 @@ class SectionDiscovery implements DiscoveryInterface {
    */
   protected function findFiles() {
     $file_list = [];
-    /** @var \Drupal\Core\File\FileSystemInterface $file_system */
-    $file_system = \Drupal::service('file_system');
     foreach ($this->directories as $provider => $directories) {
       $directories = (array) $directories;
       foreach ($directories as $section_base_directory) {
         if (is_dir($section_base_directory)) {
-          $section_files = $file_system->scanDirectory($section_base_directory . '/',  '/\.yml$/i', [
+          $section_files = file_scan_directory($section_base_directory . '/',  '/\.yml$/i', [
             'recurse' => TRUE,
             // We have the structure {SECTION}/{SECTION}.yml.
             'min_depth' => 1,
