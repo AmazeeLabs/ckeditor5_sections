@@ -12,7 +12,7 @@ abstract class CKEditor5SectionsBase extends EntityUsageTrackBase{
    * {@inheritdoc}
    */
   public function getTargetEntities(FieldItemInterface $item) {
-    $text = $item->html_processed;
+    $text = $item->html;
     if (empty($text)) {
       return [];
     }
