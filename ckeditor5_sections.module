@@ -7,6 +7,7 @@
 
 use Drupal\ckeditor5_sections\DocumentSection;
 use Drupal\ckeditor5_sections\Form\SectionsMediaLibraryUploadForm;
+use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -153,5 +154,23 @@ function ckeditor5_sections_attach_entities(DocumentSection $section) {
     if (is_array($field)) {
       array_walk($field, 'ckeditor5_sections_attach_entities');
     }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for the link editor.
+ */
+function ckeditor5_sections_form_editor_link_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (isset($form_state->getUserInput()['editor_object'])) {
+    $input = $form_state->getUserInput()['editor_object'];
+  }
+  else {
+    // Retrieve the link element's attributes from form state.
+    $input = $form_state->get('link_element') ?: [];
+  }
+
+  // Set a specific linkit profile if the input element has one defined.
+  if (!empty($input['data-linkit-profile']) && !empty($form['attributes']['href'])) {
+    $form['attributes']['href']['#autocomplete_route_parameters']['linkit_profile_id'] = $input['data-linkit-profile'];
   }
 }
