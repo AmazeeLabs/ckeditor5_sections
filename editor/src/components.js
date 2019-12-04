@@ -10,5 +10,6 @@ import "../components/components/media/index";
 import "../components/components/textfield/index";
 import "../components/components/accordion/index";
 import "../components/components/select/index";
+import "../components/components/date/index";
 import "../components/components/heading/index";
 
