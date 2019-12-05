@@ -1,22 +1,18 @@
 <?php
-
 namespace Drupal\ckeditor5_sections;
 
-use Drupal\ckeditor5_sections\Plugin\DataType\DocumentSectionAdapter;
 use Drupal\ckeditor5_sections\TypedData\DocumentSectionDataDefinition;
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\TypedData\ComplexDataDefinitionInterface;
 use Drupal\Core\TypedData\ListDataDefinitionInterface;
-use Drupal\Core\TypedData\ListInterface;
 use Drupal\Core\TypedData\TypedDataManagerInterface;
 
-/**
- * Parser class for extracting the section definitions and data from
- * templates and documents.
- */
-class DocumentConverter implements DocumentConverterInterface {
+class SectionPluginDocumentParser {
+
+  /**
+   * @var \Drupal\ckeditor5_sections\SectionPluginCollector
+   */
+  protected $sectionPluginCollector;
 
   /**
    * @var \Drupal\Core\TypedData\TypedDataManagerInterface
@@ -24,14 +20,14 @@ class DocumentConverter implements DocumentConverterInterface {
   protected $typedDataManager;
 
   /**
-   * @var \Drupal\ckeditor5_sections\SectionsCollectorInterface
-   */
-  protected $sectionsCollector;
-
-  /**
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
+
+  /**
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
 
   /**
    * Maps type names to their template DOM nodes.
@@ -40,44 +36,16 @@ class DocumentConverter implements DocumentConverterInterface {
    */
   protected $typeNodeMap;
 
-  /**
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  protected $moduleHandler;
-
-  /**
-   * The template directory.
-   *
-   * @var string[]
-   */
-  protected $templateDirectory;
-
-  /**
-   * DocumentConverter constructor.
-   *
-   * @param \Drupal\Core\TypedData\TypedDataManagerInterface $typedDataManager
-   *   A typed data manager to register new data types.
-   * @param \Drupal\ckeditor5_sections\SectionsCollectorInterface $sectionsCollector
-   *   The sections collector to retrieve all defined templates.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   The entity type manager.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
-   *   The module handler to invoke alter hooks on type definitions.
-   * @param string $templateDirectory
-   *   The template directory to use.
-   */
   public function __construct(
+    SectionPluginCollector $sectionPluginCollector,
     TypedDataManagerInterface $typedDataManager,
-    SectionsCollectorInterface $sectionsCollector,
     EntityTypeManagerInterface $entityTypeManager,
-    ModuleHandlerInterface $moduleHandler,
-    $templateDirectory
+    ModuleHandlerInterface $moduleHandler
   ) {
-    $this->sectionsCollector = $sectionsCollector;
+    $this->sectionPluginCollector = $sectionPluginCollector;
     $this->typedDataManager = $typedDataManager;
     $this->entityTypeManager = $entityTypeManager;
     $this->moduleHandler = $moduleHandler;
-    $this->templateDirectory = $templateDirectory ?: drupal_get_path('module', 'ckeditor5_sections') . '/sections';
   }
 
   /**
@@ -87,102 +55,11 @@ class DocumentConverter implements DocumentConverterInterface {
    */
   public function getSectionTypeDefinitions() {
     $section_types = [];
-    $templates = $this->sectionsCollector->getSections($this->templateDirectory);
+    $templates = $this->sectionPluginCollector->getSections();
     foreach ($templates as $template) {
       $section_types = array_merge($section_types, $this->extractSectionDefinitions($template['template']));
     }
     return $section_types;
-  }
-
-  /**
-   * Rebuild a document from its data representation.
-   *
-   * @param \Drupal\ckeditor5_sections\DocumentSection $section
-   *   The data representation of a document.
-   *
-   * @return \DOMDocument
-   */
-  public function buildDocument(DocumentSection $section) {
-    $xml = new \DOMDocument('', 'UTF-8');
-    $xml->appendChild($this->buildDocumentSection($section, $xml));
-    return $xml;
-  }
-
-  /**
-   * Rebuild a single en section of a document.
-   */
-  protected function buildDocumentSection(DocumentSection $section, \DOMDocument $doc) {
-    $node = $doc->importNode($this->getTypeNode(substr($section->getType(), strlen('section:'))), TRUE);
-    $this->processTemplateNode($section, $node);
-    return $node;
-  }
-
-  /**
-   * Process one node in a template.
-   *
-   * @param \Drupal\ckeditor5_sections\DocumentSection $section
-   *   The current section object to write data to.
-   * @param \DOMElement $el
-   *   The current template DOM node.
-   */
-  protected function processTemplateNode(DocumentSection $section, \DOMElement $el) {
-    $fields = $section->getFields();
-    $current = $section->getType() === 'section:' . $el->getAttribute('itemtype');
-    $isContainer = $el->hasAttribute('ck-contains');
-    $isInput = $el->hasAttribute('ck-input');
-    $removableAttributes = [];
-    foreach ($el->attributes as $attributeName => $attribute) {
-      if (strpos($attributeName, 'ck-') === 0) {
-        $removableAttributes[] = $attributeName;
-      }
-      if ($current) {
-        if (array_key_exists($attributeName, $fields)) {
-          $el->setAttribute($attributeName, $fields[$attributeName]);
-        }
-      }
-    }
-
-    foreach ($removableAttributes as $attributeName) {
-      $el->removeAttribute($attributeName);
-    }
-
-    if ($el->hasAttribute('itemprop')) {
-      $prop = $el->getAttribute('itemprop');
-      if ($el->hasAttribute('itemtype')) {
-        $next = $section->get($prop);
-        if ($next instanceof DocumentSection) {
-          $this->processTemplateNode($next, $el);
-          return;
-        }
-      }
-      elseif ($isContainer) {
-        $sections = $section->get($prop);
-        foreach ($sections as $child) {
-          $childSection = $this->buildDocumentSection($child, $el->ownerDocument);
-          $el->appendChild($childSection);
-        }
-      }
-      elseif ($section->get($prop) || $isInput) {
-        $value = $section->get($prop);
-        $prop_value = Html::normalize($value);
-        $fragment = new \DOMDocument('', 'UTF-8');
-        $fragment->loadHTML('<?xml encoding="utf-8" ?><div>' . $prop_value . '</div>');
-        foreach ($el->childNodes as $child) {
-          $el->removeChild($child);
-        }
-        foreach ($fragment->documentElement->lastChild->lastChild->childNodes as $child) {
-          $el->appendChild($el->ownerDocument->importNode($child, TRUE));
-        }
-      }
-    }
-
-    if (!$isContainer) {
-      foreach ($el->childNodes as $child) {
-        if ($child instanceof \DOMElement) {
-          $this->processTemplateNode($section, $child);
-        }
-      }
-    }
   }
 
   /**
@@ -204,7 +81,7 @@ class DocumentConverter implements DocumentConverterInterface {
     // The type of the fields depends on the 'itemtype' property of the element.
     // If the 'itemtype' is empty, then the type will be set to string. If there
     // is an 'itemtype' then this will become the type of the field.
-    $dom = new \DOMDocument('', 'UTF-8');
+    $dom = new \DOMDocument();
     // Load the document and convert the encoding to HTML-ENTITIES, see
     // https://davidwalsh.name/domdocument-utf8-problem
     $dom->loadHTML(mb_convert_encoding($document, 'HTML-ENTITIES', 'UTF-8'), LIBXML_NOERROR);
@@ -212,35 +89,6 @@ class DocumentConverter implements DocumentConverterInterface {
     $this->buildSectionDefinitions($dom, $result);
     $this->moduleHandler->alter('section_type_definitions', $result);
     return $result;
-  }
-
-  /**
-   * @param $type
-   *
-   * @return \DOMElement
-   */
-  public function getTypeNode($type) {
-    if (!isset($this->typeNodeMap)) {
-      // Make sure all templates are scanned and the typemap is built.
-      $this->getSectionTypeDefinitions();
-    }
-    return $this->typeNodeMap[$type];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function extractSectionData($document) {
-    $dom = new \DOMDocument('', 'UTF-8');
-    $dom->loadHTML(mb_convert_encoding($document, 'HTML-ENTITIES', 'UTF-8'), LIBXML_NOERROR);
-    // $list_definition = \Drupal::typedDataManager()->createListDataDefinition('section');
-    // $result = \Drupal::typedDataManager()->create($list_definition);
-    $result = [];
-    if ($dom->documentElement->hasAttribute('itemtype')) {
-      throw new \Exception('Data extraction requires type definition at root.');
-    }
-    $this->buildSectionData($dom, $result);
-    return $result[0];
   }
 
   /**
@@ -314,7 +162,7 @@ class DocumentConverter implements DocumentConverterInterface {
           'label' => $fieldName,
           'type' => $itemtype,
           'attributes' => array_merge(array_map(function (\DOMNode $attribute) {
-              return $attribute->nodeValue;
+            return $attribute->nodeValue;
           }, iterator_to_array($node->attributes)), $attributes),
         ];
 
@@ -333,7 +181,24 @@ class DocumentConverter implements DocumentConverterInterface {
     }
   }
 
-  public function buildSectionData(\DOMNode $node, array &$sections_list, DocumentSection $parent = NULL) {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function extractSectionData($document) {
+    $dom = new \DOMDocument();
+    $dom->loadHTML(mb_convert_encoding($document, 'HTML-ENTITIES', 'UTF-8'), LIBXML_NOERROR);
+    // $list_definition = \Drupal::typedDataManager()->createListDataDefinition('section');
+    // $result = \Drupal::typedDataManager()->create($list_definition);
+    $result = [];
+    if ($dom->documentElement->hasAttribute('itemtype')) {
+      throw new \Exception('Data extraction requires type definition at root.');
+    }
+    $this->buildSectionData($dom, $result);
+    return $result[0];
+  }
+
+  protected function buildSectionData(\DOMNode $node, array &$sections_list, DocumentSection $parent = NULL) {
     $new_parent = $parent;
     $stop_processing = FALSE;
     if ($node instanceof \DOMElement) {
@@ -456,117 +321,6 @@ class DocumentConverter implements DocumentConverterInterface {
     }
   }
 
-  // @todo: this is an initial implementation which uses the typed data, but this
-  // did not work properly when having lists of items. So for now we just use
-  // the above implementation which uses the typed data information to retrieve
-  // the metadata about the fields, but the values themselves are stored in
-
-  /**
-   * DocumentSection objects.
-   */
-  public function __buildSectionData(\DOMNode $node, ListInterface $result, DocumentSectionAdapter $parent = NULL) {
-    $new_result = $result;
-    $new_parent = $parent;
-    $update_new_result = FALSE;
-    $update_new_parent = FALSE;
-    if ($node instanceof \DOMElement) {
-      $value = [
-        'item_type' => NULL,
-        'item_cardinality' => 'single',
-      ];
-      // If the element has an itemprop attribute, and we are in the context of
-      // a parent, then we extract the item type and its cardinality from the
-      // data definition we have in the system. If the element has an itemprop,
-      // but we are not in the context of a parent then we can't say what type
-      // is, unless it has an itemtype attribute.
-      if ($node->hasAttribute('itemprop') && !empty($parent)) {
-        $parent_type = $parent->get('section_type')->getValue();
-        $field_name = $node->getAttribute('itemprop');
-        $value['field_name'] = $field_name;
-        /* @var \Drupal\Core\TypedData\ComplexDataDefinitionInterface $data_definition */
-        $data_definition = $this->typedDataManager->createDataDefinition($parent_type);
-        $field_definition = $data_definition->getPropertyDefinition($field_name);
-        // @todo: throw an exception maybe?
-        if (!empty($field_definition)) {
-          $value['item_type'] = $field_definition->getDataType();
-          // If the field data definition is an instance of ListDataDefinition,
-          // then the cardinality is multiple, and its type is section.
-          if ($field_definition instanceof ListDataDefinitionInterface) {
-            $value['item_cardinality'] = 'multiple';
-            $value['item_type'] = 'section';
-          }
-        }
-      }
-      elseif ($node->hasAttribute('itemtype')) {
-        $value['item_type'] = $node->getAttribute('itemtype');
-      }
-
-      // We only process the actual item if we could extract the item type.
-      if (!empty($value['item_type'])) {
-        if ($value['item_cardinality'] === 'multiple') {
-          $item_field_definition = $this->typedDataManager->createListDataDefinition($value['item_type']);
-          $item_field_data = $this->typedDataManager->create($item_field_definition);
-          $update_new_result = TRUE;
-        }
-        else {
-          $item_field_definition = $this->typedDataManager->createDataDefinition('section:' . $value['item_type']);
-          // If the field is a complex field, then we need to additionally check
-          // the values of the attributes.
-          if ($item_field_definition instanceof ComplexDataDefinitionInterface) {
-            /* @var \Drupal\Core\TypedData\ComplexDataInterface $item_field_data */
-            $item_field_data = $this->typedDataManager->create($item_field_definition);
-            // Add all the attributes.
-            foreach ($node->attributes as $attribute) {
-              $attributeName = $attribute->nodeName;
-              // Add the attribute to the current value.
-              if ($item_field_definition->getPropertyDefinition($attributeName)) {
-                $item_field_data->set($attributeName, $node->getAttribute($attribute->nodeName));
-              }
-            }
-            $item_field_data->set('section_type', $value['item_type']);
-            $update_new_parent = TRUE;
-          }
-          else {
-            // If the field is just a simple (scalar) field, then we just dump
-            // the entire html of th node in it for now.
-            $item_field_data = $this->typedDataManager->create($item_field_definition, $this->getDOMInnerHtml($node));
-          }
-        }
-        // If we are in the context of a parent, then just set the item data
-        // to the proper field name.
-        if (!empty($parent)) {
-          if (!empty($value['field_name'])) {
-            $parent->set($value['field_name'], $item_field_data->getValue());
-            if ($update_new_result) {
-              $new_result = $parent->get($value['field_name']);
-            }
-            if ($update_new_parent) {
-              $new_parent = $parent->get($value['field_name']);
-            }
-          }
-        }
-        // If we are not in the context of a parent, we just append the data
-        // to the result array.
-        else {
-          $appended_item = $result->appendItem($item_field_data->getValue());
-          $appended_item->getDataDefinition()->setSectionType($item_field_data->getDataDefinition()->getConstraint('SectionType'));
-          if ($update_new_result) {
-            $new_result = $appended_item;
-          }
-          if ($update_new_parent) {
-            $new_parent = $appended_item;
-          }
-        }
-      }
-    }
-    // Process all the children of the current node, if any.
-    if ($node->hasChildNodes()) {
-      foreach (iterator_to_array($node->childNodes) as $child) {
-        $this->buildSectionData($child, $new_result, $new_parent);
-      }
-    }
-  }
-
   /**
    * Returns the inner html of a DOM node.
    *
@@ -582,6 +336,23 @@ class DocumentConverter implements DocumentConverterInterface {
       $innerHTML .= $node->ownerDocument->saveHTML($child);
     }
     return $innerHTML;
+  }
+
+
+  /**
+   * @param $type
+   *
+   * @return \DOMElement
+   */
+  public function getTypeNode($type) {
+    // @todo: this should live in its own registry, i guess.
+    if (!isset($this->typeNodeMap)) {
+      // Make sure all templates are scanned and the typemap is built.
+      // @todo: this needs a refactor!
+      // @todo: in
+      $this->sectionPluginCollector->getSectionDefinitions();
+    }
+    return $this->typeNodeMap[$type];
   }
 
 }

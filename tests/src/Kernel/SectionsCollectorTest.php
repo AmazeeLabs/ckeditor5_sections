@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\ckeditor5_sections\Kernel;
 
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
@@ -82,8 +83,9 @@ class SectionsCollectorTest extends KernelTestBase {
    */
   public function testTemplateProcessing($en, $gd) {
     // Mock the translation manager for ease.
-    $string_translation = $this->getMockBuilder('ContentTranslationManagerInterface')
-      ->setMethods(['translateString'])
+    $string_translation = $this->getMockBuilder(TranslationInterface::class)
+      ->disableOriginalConstructor()
+      ->setMethods(['translateString', 'translate', 'formatPlural'])
       ->getMock();
     $string_translation
       ->expects($this->exactly(3))
@@ -92,8 +94,7 @@ class SectionsCollectorTest extends KernelTestBase {
     \Drupal::getContainer()->set('string_translation', $string_translation);
 
     // Get the dummy templates and run them through the method.
-    $path = drupal_get_path('module', 'ckeditor5_sections_test') . '/templates';
-    $sections = $this->sectionsCollector->getSections($path);
+    $sections = $this->sectionsCollector->getSections();
 
     // Check to ensure the expected strings are where we want them.
     $this->assertTrue(strpos($sections['test1']['template'], $en));

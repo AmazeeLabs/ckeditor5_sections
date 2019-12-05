@@ -26,4 +26,13 @@ interface SectionsCollectorInterface {
    */
   public function getSectionDefinitions($directory = NULL);
 
+  /**
+   * Retrieve a list of all stylesheets.
+   *
+   * @param string $directory
+   *   The directory to scan. Will default to the `sections` module.
+   * @return string[]
+   *   The list of css file paths.
+   */
+  public function getStyleSheets($directory = NULL);
 }

@@ -3,19 +3,6 @@ services:
     class: Drupal\ckeditor5_sections\Routing\RouteSubscriber
     tags:
     - { name: event_subscriber }
-  ckeditor5_sections.sections_collector:
-    class: Drupal\ckeditor5_sections\SectionsCollector
-    arguments: ['@entity_type.manager', '@ckeditor5_sections.twig_processor', '%ckeditor5_sections.template_directory%']
-    tags:
-      - { name: event_subscriber }
-  ckeditor5_sections.document_converter:
-    class: Drupal\ckeditor5_sections\DocumentConverter
-    arguments:
-      - '@typed_data_manager'
-      - '@ckeditor5_sections.sections_collector'
-      - '@entity_type.manager'
-      - '@module_handler'
-      - '%ckeditor5_sections.template_directory%'
   ckeditor5_sections.normalizer.document_section:
     class: Drupal\ckeditor5_sections\Normalizer\DocumentSectionNormalizer
     tags:
@@ -32,6 +19,30 @@ services:
   media_library.opener.sections:
     class: Drupal\ckeditor5_sections\SectionsMediaLibraryOpener
     arguments: ['@entity_type.manager']
+  plugin.manager.section_plugin:
+    class: Drupal\ckeditor5_sections\Plugin\SectionPluginManager
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@theme_handler']
+  ckeditor5_sections.sections_collector:
+    class: Drupal\ckeditor5_sections\SectionPluginCollector
+    arguments: ['@plugin.manager.section_plugin']
+    tags:
+      - { name: event_subscriber }
+  ckeditor5_sections.document_converter:
+    class: Drupal\ckeditor5_sections\SectionPluginConverter
+    arguments:
+      - '@ckeditor5_sections.sections_collector'
+      - '@ckeditor5_sections.section_plugin_document_parser'
+      - '@ckeditor5_sections.section_plugin_document_builder'
+  ckeditor5_sections.section_plugin_document_parser:
+    class: Drupal\ckeditor5_sections\SectionPluginDocumentParser
+    arguments:
+      - '@ckeditor5_sections.sections_collector'
+      - '@typed_data_manager'
+      - '@entity_type.manager'
+      - '@module_handler'
+  ckeditor5_sections.section_plugin_document_builder:
+    class: Drupal\ckeditor5_sections\SectionPluginDocumentBuilder
+    arguments: ['@ckeditor5_sections.section_plugin_document_parser']
 
 parameters:
   ckeditor5_sections.template_directory: false
