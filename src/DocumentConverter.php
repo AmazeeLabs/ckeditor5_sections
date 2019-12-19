@@ -156,7 +156,7 @@ class DocumentConverter implements DocumentConverterInterface {
         }
       }
       elseif ($isContainer) {
-        $sections = $section->get($prop);
+        $sections = $section->get($prop) ?: [];
         foreach ($sections as $child) {
           $childSection = $this->buildDocumentSection($child, $el->ownerDocument);
           $el->appendChild($childSection);
