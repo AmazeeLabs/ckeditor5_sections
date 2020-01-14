@@ -26,7 +26,6 @@ class DocumentMergeTest extends UnitTestCase {
   }
 
   /**
-   * @covers       \Drupal\delivery\DocumentMerge::merge
    * @dataProvider mergeProvider
    */
   public function testMerge($source, $left, $right, $result) {
@@ -140,8 +139,8 @@ XML;
 
     $result = <<<XML
 <div class="container">
-    <div added="1" by="right" class="a" id="2"></div>
     <div added="1" by="left" class="a" id="1"></div>
+    <div added="1" by="right" class="a" id="2"></div>
 </div>
 XML;
     $this->assertMergeResult($source, $left, $right, $result);
@@ -258,8 +257,8 @@ XML;
     $result = <<<XML
 <div class="container">
     <div class="a" id="1"></div>
-    <div class="a" id="2" removed="1" by="left"></div>
     <div class="a" id="3"></div>
+    <div class="a" id="2" removed="1" by="left"></div>
 </div>
 XML;
     $this->assertMergeResult($source, $left, $right, $result);
@@ -292,10 +291,11 @@ XML;
     $result = <<<XML
 <div class="container">
     <div class="a" id="1"></div>
-    <div added="1" by="right" class="a" id="3"></div>
     <div removed="1" by="right" class="a" id="2"></div>
+    <div added="1" by="right" class="a" id="3"></div>
 </div>
 XML;
+
     $this->assertMergeResult($source, $left, $right, $result);
   }
 
@@ -327,9 +327,8 @@ XML;
     $result = <<<XML
 <div class="container">
     <div class="a" id="1"></div>
-    <div removed="1" by="left" class="a" id="2"></div>
     <div class="a" id="3"></div>
-    <div added="1" by="left" class="a" id="2"></div>
+    <div class="a" id="2"></div>
 </div>
 XML;
     $this->assertMergeResult($source, $left, $right, $result);
@@ -363,9 +362,8 @@ XML;
     $result = <<<XML
 <div class="container">
     <div class="a" id="1"></div>
-    <div added="1" by="right" class="a" id="3"></div>
     <div class="a" id="2"></div>
-    <div removed="1" by="right" class="a" id="3"></div>
+    <div class="a" id="3"></div>
 </div>
 XML;
     $this->assertMergeResult($source, $left, $right, $result);
@@ -736,8 +734,8 @@ XML;
 <div class="container">
   <div class="a" id="a">
     <div class="a" id="d">
-      <div class="a" id="e" removed="1" by="left">E</div>
       <div class="a" id="f" added="1" by="left">F</div>
+      <div class="a" id="e" removed="1" by="left">E</div>
       <div class="a" id="f" added="1" by="right">FRight</div>
     </div>
     <ck-conflict-text class="a">
@@ -752,13 +750,13 @@ XML;
       </ck-conflict-option>
     </ck-conflict-text>
   </div>
+  <div class="a" id="c">C</div>
   <div class="a" id="b" added="1" by="right">
+    <div class="a" id="j">JRight</div>
     <div class="a" id="h">
       <div class="a" id="i">IUpdated</div>
     </div>
-    <div class="a" id="j">JRight</div>
   </div>
-  <div class="a" id="c">C</div>
   <div class="a" id="b" added="1" by="left">
     <div class="a" id="e">ELeft</div>
     <div class="a" id="j">JLeft</div>

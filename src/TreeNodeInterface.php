@@ -50,6 +50,14 @@ interface TreeNodeInterface {
   public function getChildren();
 
   /**
+   * Sets the children of this node.
+   *
+   * @param \Drupal\delivery\TreeNode[] $children
+   * An array of tree nodes.
+   */
+  public function setChildren(array $children);
+
+  /**
    * Returns the DOM node of this tree node.
    *
    * @return \DOMNode | NULL

@@ -50,6 +50,7 @@ class DocumentMerge implements DocumentMergeInterface {
     $this->traverseRight($this->rightTree->getRoot(), $this->resultTree->getRoot());
     $this->traverseLeft($this->leftTree->getRoot());
     $this->removeDuplicatesFromTree($this->resultTree->getRoot());
+    $this->updateOrder($this->resultTree->getRoot());
 
     $result = new \DOMDocument('', 'UTF-8');
     $result->formatOutput = TRUE;
@@ -274,7 +275,9 @@ class DocumentMerge implements DocumentMergeInterface {
           }
         }
         // Add the cloned trees to the result.
-        $this->resultTree->addNode($clonedTree->getRoot(), $resultParent);
+        if (!empty($clonedTree)) {
+          $this->resultTree->addNode($clonedTree->getRoot(), $resultParent);
+        }
         if (!empty($nodeFromLeft)) {
           $this->resultTree->addNode($cloneTreeFromLeft->getRoot(), $resultParent);
         }
@@ -426,14 +429,16 @@ class DocumentMerge implements DocumentMergeInterface {
       $count = count($children);
       for ($index = 0; $index < $count - 1; $index++) {
         // If the current child has the same identifier, attributes and content
-        // as the next one, we only keep the current node and remove any 'added'
-        // or 'removed' flags.
+        // as any of next one, we only keep the current node and remove any
+        // 'added' or 'removed' flags.
         $currentChild = $children[$index];
-        $nextChild = $children[$index + 1];
-        if ($currentChild->getId() === $nextChild->getId() && $currentChild->matchAttributes($nextChild) && $currentChild->matchContent($nextChild)) {
-          $node->removeChild($index + 1);
-          $currentChild->unflag('added');
-          $currentChild->unflag('removed');
+        for ($next_index = $index + 1; $next_index < $count; $next_index++) {
+          $nextChild = $children[$next_index];
+          if ($currentChild->getId() === $nextChild->getId() && $currentChild->matchAttributes($nextChild) && $currentChild->matchContent($nextChild)) {
+            $node->removeChild($next_index);
+            $currentChild->unflag('added');
+            $currentChild->unflag('removed');
+          }
         }
       }
       // Apply the same algorithm to the children of the current node.
@@ -441,6 +446,88 @@ class DocumentMerge implements DocumentMergeInterface {
         $this->removeDuplicatesFromTree($child);
       }
     }
+  }
+
+  /**
+   * Updates the order of the elements to match the 'left' tree order.
+   *
+   * The order strategy should be:
+   *  - apply the order of the elements in the left tree, and mark them as
+   *   'removed' by the 'right' tree.
+   *  - add all the nodes that do not exist in the left tree after the last
+   *    'left' element.
+   */
+  protected function updateOrder(TreeNode $node) {
+    $children  = $node->getChildren();
+    if (!empty($children)) {
+      /* @var TreeNode $leftNode */
+      $leftNode = $this->leftTree->search($node->getId());
+      /* @var TreeNode $rightNode */
+      $rightNode = $this->rightTree->search($node->getId());
+      if (!empty($leftNode)) {
+        $leftNodeChildren = $leftNode->getChildren();
+        $rightNodeChildren = !empty($rightNode) ? $rightNode->getChildren() : [];
+        // The orderedChildren will contain first all the left elements which
+        // can be found in the merge result. For that, we just iterate over the
+        // left elements and search the current element in the children. When we
+        // find it, we just add it to the orderedChildren array and mark is as
+        // removed by 'right'.
+        $orderedChildren = [];
+        if (!empty($leftNodeChildren)) {
+          foreach ($leftNodeChildren as $leftNodeChild) {
+            foreach ($children as $index => $child) {
+              if ($leftNodeChild->getId() === $child->getId()) {
+                // If the same node cannot be found in the right tree, then we
+                // mark it as removed by right.
+                $foundInRightTree = FALSE;
+                if (!empty($rightNodeChildren)) {
+                  foreach ($rightNodeChildren as $rightNodeChild) {
+                    if ($rightNodeChild->getId() === $child->getId()) {
+                      $foundInRightTree = TRUE;
+                      break;
+                    }
+                  }
+                }
+                // If the node does not have yet any added or removed flags,
+                // then we just add the 'removed by right' flag.
+                if (!$foundInRightTree && !$this->nodeOrParentsHaveFlags($child)) {
+                  $child->flag('removed', 'right');
+                }
+                $orderedChildren[] = $child;
+                // This node was processed, so it does not make sense to keep it
+                // in the children list anymore.
+                unset($children[$index]);
+                break;
+              }
+            }
+          }
+          // Add the remaining nodes to the orderedChildren array. These are the
+          // nodes which were not found in the left tree.
+          foreach ($children as $child) {
+            $orderedChildren[] = $child;
+          }
+          $node->setChildren($orderedChildren);
+        }
+      }
+      // Apply the same order algorithm for all the children of the current
+      // node.
+      foreach ($node->getChildren() as $child) {
+        $this->updateOrder($child);
+      }
+    }
+  }
+
+  protected function nodeOrParentsHaveFlags(TreeNode $node) {
+    $currentNode = $node;
+    while (!empty($currentNode)) {
+      $added_flag = $currentNode->getFlag('added');
+      $removed_flag = $currentNode->getFlag('removed');
+      if (!empty($added_flag) || !empty($removed_flag)) {
+        return TRUE;
+      }
+      $currentNode = $currentNode->getParent();
+    }
+    return FALSE;
   }
 
   /**

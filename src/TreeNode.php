@@ -87,6 +87,13 @@ class TreeNode implements TreeNodeInterface {
     return $this->children;
   }
 
+  public function setChildren(array $children) {
+    $this->children = $children;
+    foreach ($children as $child) {
+      $child->setParent($this);
+    }
+  }
+
   /**
    * {@inheritdoc}
    */
