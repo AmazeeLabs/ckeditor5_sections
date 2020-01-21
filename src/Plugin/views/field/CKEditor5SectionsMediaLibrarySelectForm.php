@@ -146,6 +146,7 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
    */
   protected function getReturnType() {
     $query = $this->view->getRequest()->query->all();
+    $opener = NULL;
     if (!empty($query['media_library_opener_id'])) {
       $opener = \Drupal::service($query['media_library_opener_id']);
     }
