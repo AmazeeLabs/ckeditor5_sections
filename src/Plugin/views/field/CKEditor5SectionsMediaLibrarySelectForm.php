@@ -36,7 +36,8 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
     $form[$this->options['id']]['#tree'] = TRUE;
     $return_type = $this->getReturnType();
     foreach ($this->view->result as $row_index => $row) {
-      $entity = $this->getEntity($row);
+      // $row->_object->entity allow this to work or search api views.
+      $entity = $this->getEntity($row) ?? $row->_object->getEntity();
       $form[$this->options['id']][$row_index] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Select @label', [
