@@ -66,6 +66,19 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
     $url = parse_url($form['#action'], PHP_URL_PATH);
     $query = $this->view->getRequest()->query->all();
     $query[FormBuilderInterface::AJAX_FORM_REQUEST] = TRUE;
+
+    $_SESSION['media_library_field_id'] = $query['field_id'] ?? $_SESSION['media_library_field_id'];
+
+    if (!isset($query['media_library_opener_parameters']['field_widget_id']) || !$query['media_library_opener_parameters']['field_widget_id']) {
+      // This will force the valid creation of a MediaLibraryState object
+      // with valid hash, as we don't have a has passed from frontend.
+      unset($query['media_library_opener_id']);
+      unset($query['media_library_opener_parameters']);
+      // Initial triggering element (outside of modal) is lost on
+      // second ajax view replacement,re-add it.
+      $query['field_id'] = $_SESSION['media_library_field_id'];
+    }
+
     $form['actions']['submit']['#ajax'] = [
       'url' => Url::fromUserInput($url),
       'options' => [
@@ -114,6 +127,9 @@ class CKEditor5SectionsMediaLibrarySelectForm extends MediaLibrarySelectForm {
     else {
       $selected = array_filter(explode(',', $form_state->getValue($field_id, [])));
     }
+
+    // Remove session field id.
+    unset($_SESSION['media_library_field_id']);
 
     return \Drupal::service('media_library.opener_resolver')
       ->get($state)
