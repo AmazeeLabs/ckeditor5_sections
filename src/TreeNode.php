@@ -175,9 +175,10 @@ class TreeNode implements TreeNodeInterface {
    * {@inheritdoc}
    */
   public function matchPosition(TreeNode $node) {
-    // Two nodes have the same position (withing different trees) if:
-    // 1. Their parents have the same ids.
-    // 2. They have the same index (position) within their siblings.
+    // Right now, two nodes have the same position (withing different trees) if
+    // their parents have the same ids. When we will also care about the order
+    // of the elements, then we need to also check the index (position) within
+    // their siblings.
     $nodeParent = $node->getParent();
     $currentParent = $this->getParent();
     // If only one of the parents is empty, then the positions don't match.
@@ -188,7 +189,10 @@ class TreeNode implements TreeNodeInterface {
     if (empty($nodeParent) && empty($currentParent)) {
       return TRUE;
     }
-    return ($this->getParent()->getId() === $node->getParent()->getId() && $this->getPosition() === $node->getPosition());
+    return ($this->getParent()->getId() === $node->getParent()->getId());
+    // In case we care about the position of the node within its siblings, we
+    // need to update the return statement to the one bellow.
+    // return ($this->getParent()->getId() === $node->getParent()->getId() && $this->getPosition() === $node->getPosition());
   }
 
   /**
