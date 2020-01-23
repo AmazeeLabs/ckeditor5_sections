@@ -225,6 +225,7 @@ XML;
     $result = <<<XML
 <div class="container">
     <div class="a" id="1"></div>
+    <div by="right" class="a" id="2" removed="1"/>
 </div>
 XML;
     $this->assertMergeResult($source, $left, $right, $result);
@@ -292,7 +293,7 @@ XML;
 <div class="container">
     <div class="a" id="1"></div>
     <div removed="1" by="right" class="a" id="2"></div>
-    <div added="1" by="right" class="a" id="3"></div>
+    <div class="a" id="3"></div>
 </div>
 XML;
 
@@ -734,16 +735,25 @@ XML;
 <div class="container">
   <div class="a" id="a">
     <div class="a" id="d">
-      <div class="a" id="f" added="1" by="left">F</div>
       <div class="a" id="e" removed="1" by="left">E</div>
-      <div class="a" id="f" added="1" by="right">FRight</div>
+      <ck-conflict-text class="a">
+        <ck-conflict-option from="source">
+          <div class="a" id="f">F</div>
+        </ck-conflict-option>
+        <ck-conflict-option from="left">
+          <div class="a" id="f">F</div>
+        </ck-conflict-option>
+        <ck-conflict-option from="right">
+          <div class="a" id="f">FRight</div>
+        </ck-conflict-option>
+      </ck-conflict-text>
     </div>
     <ck-conflict-text class="a">
       <ck-conflict-option from="source">
-          <div class="a" id="g">G</div>
+        <div class="a" id="g">G</div>
       </ck-conflict-option>
       <ck-conflict-option from="left">
-          <div class="a" id="g">GLeft</div>
+        <div class="a" id="g">GLeft</div>
       </ck-conflict-option>
       <ck-conflict-option from="right">
         <div class="a" id="g">G</div>
@@ -751,18 +761,22 @@ XML;
     </ck-conflict-text>
   </div>
   <div class="a" id="c">C</div>
-  <div class="a" id="b" added="1" by="right">
-    <div class="a" id="j">JRight</div>
+  <div class="a" id="b">
+    <div class="a" id="e" added="1" by="left">ELeft</div>
     <div class="a" id="h">
       <div class="a" id="i">IUpdated</div>
     </div>
-  </div>
-  <div class="a" id="b" added="1" by="left">
-    <div class="a" id="e">ELeft</div>
-    <div class="a" id="j">JLeft</div>
-    <div class="a" id="h">
-      <div class="a" id="i">IUpdated</div>
-    </div>
+    <ck-conflict-text class="a">
+      <ck-conflict-option from="source">
+        <div class="a" id="j">J</div>
+      </ck-conflict-option>
+      <ck-conflict-option from="left">
+        <div class="a" id="j">JLeft</div>
+      </ck-conflict-option>
+      <ck-conflict-option from="right">
+        <div class="a" id="j">JRight</div>
+      </ck-conflict-option>
+    </ck-conflict-text>
   </div>
   <ck-conflict-text class="a">
     <ck-conflict-option from="source">
@@ -774,7 +788,7 @@ XML;
     <ck-conflict-option from="right">
       <div class="a" id="x">XRight</div>
     </ck-conflict-option>
-</ck-conflict-text>
+  </ck-conflict-text>
 </div>
 XML;
     $this->assertMergeResult($source, $left, $right, $result);

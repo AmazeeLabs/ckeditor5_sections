@@ -49,6 +49,9 @@ class DocumentMerge implements DocumentMergeInterface {
     $this->resultTree = new Tree();
     $this->traverseRight($this->rightTree->getRoot(), $this->resultTree->getRoot());
     $this->traverseLeft($this->leftTree->getRoot());
+    // We may end up with duplicated nodes in the result tree, especially when
+    // we care about the ordering of the elements. So make sure we don't keep
+    // this duplicated elements in the result.
     $this->removeDuplicatesFromTree($this->resultTree->getRoot());
     $this->updateOrder($this->resultTree->getRoot());
 
@@ -303,8 +306,7 @@ class DocumentMerge implements DocumentMergeInterface {
       // attributes or content, then we have the case that the left removed the
       // node (and probably replaced it with something else), and the right
       // changed it. In this case we add the entire right subtree to the result
-      // and mark it is 'added by right'. Also, we add the element from the same
-      // position in the left subtree (if any) and mark it as 'added by left'.
+      // and mark it is 'added by right'.
       // In any of these cases, we don't process any other children.
 
       // Case 1: The node is not found in the source tree.
@@ -331,14 +333,16 @@ class DocumentMerge implements DocumentMergeInterface {
 
         // Check if there is another node on the same position in the left tree
         // and add it to the result as 'added by left'.
-        $path = $this->rightTree->getPathFromRoot($currentNode);
+        // Ignored this for now, the missing left nodes will be added by the
+        // traverseLeft() method.
+        /*$path = $this->rightTree->getPathFromRoot($currentNode);
         $nodeFromLeft = $this->leftTree->getNodeFromPath($path);
         if (!empty($nodeFromLeft)) {
           $cloneTreeFromLeft = Tree::cloneSubtree($nodeFromLeft);
           $cloneTreeFromLeft->getRoot()->flag('added', 'left');
           $this->resultTree->addNode($cloneTreeFromLeft->getRoot(), $resultParent);
           $nodeFromLeft->flag('processed', TRUE, TRUE);
-        }
+        }*/
       }
       $stopTraversing = TRUE;
     }
@@ -363,14 +367,15 @@ class DocumentMerge implements DocumentMergeInterface {
     if (empty($processed)) {
       // We also have to check now if the node exists in the source tree. If
       // yes, then if it is identical to left, it means that right just removed
-      // the node and basically we don't do anything. If it is not identical
-      // (or if the item does not exist), then it was added by left.
+      // the node. If it is not identical (or if the item does not exist), then
+      // it was added by left.
       $sourceNode = $this->sourceTree->search($currentNode->getId());
       if (!empty($sourceNode)) {
         if ($currentNode->matchPosition($sourceNode) && $currentNode->matchAttributes($sourceNode) && $currentNode->matchContent($sourceNode)) {
-          // This is the case when right removed the node. So basically, we
-          // done't do anything here. An alternative would to also highlight
-          // that the right removed the node.
+          // This is the case when right removed the node.
+          $clonedTree = Tree::cloneSubtree($currentNode);
+          $clonedTree->getRoot()->flag('removed', 'right');
+          $this->resultTree->addNode($clonedTree->getRoot(), $resultParent);
           $currentNode->flag('processed', TRUE, TRUE);
         }
         else {
@@ -392,8 +397,12 @@ class DocumentMerge implements DocumentMergeInterface {
     else {
       // Process the children of the current node too.
       if (!empty($currentNode->getChildren())) {
-        $currentNodePath = $this->leftTree->getPathFromRoot($currentNode);
-        $newResultParent = $this->resultTree->getNodeFromPath($currentNodePath);
+        // Previously, we did also care about the position of the elements in
+        // the result tree. Now we care only about the ids. If we ever introduce
+        // the ordering strategy back, then we may want to revert this change.
+        //$currentNodePath = $this->leftTree->getPathFromRoot($currentNode);
+        //$newResultParent = $this->resultTree->getNodeFromPath($currentNodePath);
+        $newResultParent = $this->resultTree->search($currentNode->getId());
         foreach ($currentNode->getChildren() as $child) {
           if (empty($resultParent)) {
             $this->traverseLeft($child, $this->resultTree->getRoot());
@@ -492,6 +501,12 @@ class DocumentMerge implements DocumentMergeInterface {
                 // then we just add the 'removed by right' flag.
                 if (!$foundInRightTree && !$this->nodeOrParentsHaveFlags($child)) {
                   $child->flag('removed', 'right');
+                }
+                // If we also found the node in the right tree, then just remove
+                // any flags on it.
+                elseif ($foundInRightTree) {
+                  $child->unflag('added');
+                  $child->unflag('removed');
                 }
                 $orderedChildren[] = $child;
                 // This node was processed, so it does not make sense to keep it
