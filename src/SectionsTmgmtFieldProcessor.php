@@ -32,18 +32,24 @@ class SectionsTmgmtFieldProcessor implements FieldProcessorInterface {
   }
 
   protected function extractSectionsData($sections, &$data) {
-    foreach ($sections as $section_field_id => $section_field_data) {
-      if (is_string($section_field_data)) {
-        $data[$section_field_id] = [
-          '#label' => $section_field_id,
-          '#text' => $section_field_data,
-          // @todo: not all the section fields should be translatable.
-          '#translate' => TRUE,
+    foreach ($sections as $section_property_name => $section_property_data) {
+      if (is_string($section_property_data)) {
+        $data[$section_property_name] = [
+          '#label' => ucfirst($section_property_name),
+          '#text' => $section_property_data,
+          '#translate' => $this->shouldTranslateSectionProperty($section_property_name),
         ];
       }
       else {
-        $data[$section_field_id] = [];
-        $this->extractSectionsData($section_field_data, $data[$section_field_id]);
+        $label = is_numeric($section_property_name) ? t('Delta #@delta', array('@delta' => $section_property_name)) : ucfirst($section_property_name);
+        // Append the type of the section to the label, if it exists.
+        if (!empty($section_property_data['__type'])) {
+          $label .= ': ' . $section_property_data['__type'];
+        }
+        $data[$section_property_name] = [
+          '#label' => $label,
+        ];
+        $this->extractSectionsData($section_property_data, $data[$section_property_name]);
       }
     }
   }
@@ -97,5 +103,25 @@ class SectionsTmgmtFieldProcessor implements FieldProcessorInterface {
         }
       }
     }
+  }
+
+  /**
+   * Checks if a section property should be translatable.
+   */
+  protected function shouldTranslateSectionProperty($property) {
+    // @todo: make this more flexible, maybe invoke a hook to get any other
+    // untranslatable properties.
+    $non_translatable_properties = [
+      '__type',
+      'id',
+    ];
+    if (in_array($property, $non_translatable_properties)) {
+      return FALSE;
+    }
+    // Any data property should not be translatable.
+    if (strpos($property, 'data-') === 0) {
+      return FALSE;
+    }
+    return TRUE;
   }
 }
