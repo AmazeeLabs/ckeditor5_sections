@@ -7,6 +7,7 @@
 
 use Drupal\ckeditor5_sections\DocumentSection;
 use Drupal\ckeditor5_sections\Form\SectionsMediaLibraryUploadForm;
+use Drupal\ckeditor5_sections\SectionsTmgmtFieldProcessor;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -172,5 +173,14 @@ function ckeditor5_sections_form_editor_link_dialog_alter(&$form, FormStateInter
   // Set a specific linkit profile if the input element has one defined.
   if (!empty($input['data-linkit-profile']) && !empty($form['attributes']['href'])) {
     $form['attributes']['href']['#autocomplete_route_parameters']['linkit_profile_id'] = $input['data-linkit-profile'];
+  }
+}
+
+/**
+ * Implements hook_field_info_alter().
+ */
+function ckeditor5_sections_field_info_alter(&$info) {
+  if (isset($info['sections']) && \Drupal::moduleHandler()->moduleExists('tmgmt_content')) {
+    $info['sections']['tmgmt_field_processor'] = SectionsTmgmtFieldProcessor::class;
   }
 }
