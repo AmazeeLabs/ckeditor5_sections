@@ -40,7 +40,10 @@ class SectionsTmgmtFieldProcessor implements FieldProcessorInterface {
           '#translate' => $this->shouldTranslateSectionProperty($section_property_name),
         ];
       }
-      else {
+      // We currently don't support translating embedded entities, so we
+      // proceed further only if the current data is an array, so any entity
+      // objects are skipped.
+      elseif (is_array($section_property_data)) {
         $label = is_numeric($section_property_name) ? t('Delta #@delta', array('@delta' => $section_property_name)) : ucfirst($section_property_name);
         // Append the type of the section to the label, if it exists.
         if (!empty($section_property_data['__type'])) {
