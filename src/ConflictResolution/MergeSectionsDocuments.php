@@ -45,7 +45,7 @@ class MergeSectionsDocuments extends MergeStrategyBase {
           $merge->setLabel('left', t('@workspace version', ['@workspace' => $remote_entity->workspace->entity->label()]));
 
           $right = $rightItem ? $rightItem->html : '';
-          $merge->setLabel('right', t('@workspace version', ['@workspace' => $local_entity->workspace->entity->label()]));
+          $merge->setLabel('right', t('@workspace version', ['@workspace' => $local_entity->workspace->entity ? $local_entity->workspace->entity->label() : '']));
 
           $result = $left && $right && $source ? $merge->merge($source, $left, $right) : '';
 
