@@ -200,8 +200,16 @@
 
       var type = event.detail.type.split(':')[0];
 
-      $.ajax(Drupal.url('sections/' + (type === 'media' ? 'media' : 'content') + '-preview/' + event.detail.uuid + '/' + event.detail.display || 'default' ))
-          .done(function (preview) { event.respond(preview); });
+      var lang = editor.parentElement.children[0].getAttribute('data-lang');
+
+      var urlString = 'sections/' + (type === 'media' ? 'media' : 'content') + '-preview/' + event.detail.uuid + '/' + event.detail.display || 'default';
+
+      var requestUrl = lang ? '/' + lang + '/' + urlString : Drupal.url(urlString);
+
+      $.ajax(requestUrl)
+        .done(function (preview) {
+          event.respond(preview);
+        });
     });
 
     editor.addEventListener('ck-editor:select-link', function (event) {
