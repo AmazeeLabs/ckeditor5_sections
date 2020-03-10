@@ -83,6 +83,7 @@ class CKEditor5SectionsMediaFilter extends FilterBase implements ContainerFactor
         /** @var \DOMElement $node */
         $media_uuid = $node->getAttribute('data-media-uuid');
         $display = $node->getAttribute('data-media-display');
+        $slot = $node->getAttribute('slot');
         // Clear attributes and normalize.
         $node->removeAttribute('data-media-uuid');
         $node->removeAttribute('data-media-display');
@@ -101,11 +102,15 @@ class CKEditor5SectionsMediaFilter extends FilterBase implements ContainerFactor
         $updated_nodes = Html::load($rendered)->getElementsByTagName('body')
           ->item(0)
           ->childNodes;
+        // Create a wrapper and add slot attribute.
+        $wrapper = $document->createElement('div');
+        $wrapper->setAttribute('slot', $slot);
+        $wrapperNode = $node->parentNode->insertBefore($wrapper, $node);
 
         // Insert rendered media into the element.
         foreach ($updated_nodes as $updated_node) {
           $updated_node = $document->importNode($updated_node, TRUE);
-          $node->parentNode->insertBefore($updated_node, $node);
+          $wrapperNode->appendChild($updated_node);
         }
         $node->parentNode->removeChild($node);
       }
