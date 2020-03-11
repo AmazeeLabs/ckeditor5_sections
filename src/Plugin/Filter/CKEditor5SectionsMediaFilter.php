@@ -84,6 +84,7 @@ class CKEditor5SectionsMediaFilter extends FilterBase implements ContainerFactor
         $media_uuid = $node->getAttribute('data-media-uuid');
         $display = $node->getAttribute('data-media-display');
         $slot = $node->getAttribute('slot');
+        $mediaType = $node->getAttribute('data-media-type');
         // Clear attributes and normalize.
         $node->removeAttribute('data-media-uuid');
         $node->removeAttribute('data-media-display');
@@ -91,13 +92,16 @@ class CKEditor5SectionsMediaFilter extends FilterBase implements ContainerFactor
         if (empty($display)) {
           $display = 'default';
         }
-
-        $media = $this->entityRepository->loadEntityByUuid('media', $media_uuid);
+        $type = reset(explode(':', $mediaType));
+        if (!in_array($type, ['node', 'media'])) {
+          $type = 'media';
+        }
+        $media = $this->entityRepository->loadEntityByUuid($type, $media_uuid);
         if (!$media) {
           continue;
         }
 
-        $build = $this->entityTypeManager->getViewBuilder('media')->view($media, $display);
+        $build = $this->entityTypeManager->getViewBuilder($type)->view($media, $display);
         $rendered = $this->renderer->render($build);
         $updated_nodes = Html::load($rendered)->getElementsByTagName('body')
           ->item(0)
