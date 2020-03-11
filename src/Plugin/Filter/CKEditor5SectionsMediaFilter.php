@@ -92,7 +92,8 @@ class CKEditor5SectionsMediaFilter extends FilterBase implements ContainerFactor
         if (empty($display)) {
           $display = 'default';
         }
-        $type = reset(explode(':', $mediaType));
+        $types = explode(':', $mediaType);
+        $type = reset($types);
         if (!in_array($type, ['node', 'media'])) {
           $type = 'media';
         }
