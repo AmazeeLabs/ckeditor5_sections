@@ -82,15 +82,6 @@ function ckeditor5_sections_media_source_info_alter(array &$sources) {
 }
 
 /**
- * Implements hook_page_attachments().
- */
-function ckeditor5_sections_page_attachments(array &$attachments) {
-  // TODO: Allow loading of user defined libraries.
-  $attachments['#attached']['library'][] = 'ckeditor5_sections/editor_components';
-  $attachments['#attached']['library'][] = 'ckeditor5_sections/sections';
-}
-
-/**
  * Implements hook_ckeditor5_sections_editor_settings_alter().
  */
 function ckeditor5_sections_ckeditor5_sections_editor_settings_alter(array &$settings) {
