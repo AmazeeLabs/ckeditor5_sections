@@ -130,7 +130,7 @@ class SectionsItem extends FieldItemBase {
     if (isset($this->properties['json'])) {
       unset($this->properties['json']);
     }
-    if ($values['json']) {
+    if (!empty($values['json'])) {
       /* @var \Drupal\ckeditor5_sections\DocumentConverterInterface $parser */
       $sections = DocumentSection::fromValue(json_decode($values['json'], TRUE));
 
