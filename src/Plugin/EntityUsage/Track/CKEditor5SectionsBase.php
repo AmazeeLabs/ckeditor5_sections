@@ -18,10 +18,14 @@ abstract class CKEditor5SectionsBase extends EntityUsageTrackBase{
     }
     $entities_in_text = $this->parseEntitiesFromText($text);
     $valid_entities = [];
+    /** @var \Drupal\Core\Entity\EntityTypeManager $entityTypeManager */
+    $entityTypeManager = \Drupal::service('entity_type.manager');
+    $definitions = $entityTypeManager->getDefinitions();
+
     foreach ($entities_in_text as $uuid => $entity_type) {
       // Check if the target entity exists since text fields are not
       // automatically updated when an entity is removed.
-      if (!in_array($entity_type, ['node', 'media'])) {
+      if (empty($definitions[$entity_type])) {
         $entity_type = 'media';
       }
       if ($target_entity = $this->entityRepository->loadEntityByUuid($entity_type, $uuid)) {

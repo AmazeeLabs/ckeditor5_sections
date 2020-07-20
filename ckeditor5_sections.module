@@ -142,7 +142,10 @@ function ckeditor5_sections_attach_entities(DocumentSection $section) {
   $uuid = $section->get('data-media-uuid');
   if ($type && $uuid) {
     $entityType = explode(':', $type)[0];
-    if (!in_array($entityType, ['node', 'media'])) {
+    /** @var \Drupal\Core\Entity\EntityTypeManager $entityTypeManager */
+    $entityTypeManager = \Drupal::service('entity_type.manager');
+    $definitions = $entityTypeManager->getDefinitions();
+    if (empty($definitions[$entityType])) {
       $entityType = 'media';
     }
     /** @var \Drupal\Core\Entity\EntityRepositoryInterface $entityRepository */
