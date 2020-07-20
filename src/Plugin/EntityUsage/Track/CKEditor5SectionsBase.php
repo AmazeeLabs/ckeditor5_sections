@@ -21,6 +21,9 @@ abstract class CKEditor5SectionsBase extends EntityUsageTrackBase{
     foreach ($entities_in_text as $uuid => $entity_type) {
       // Check if the target entity exists since text fields are not
       // automatically updated when an entity is removed.
+      if (!in_array($entity_type, ['node', 'media'])) {
+        $entity_type = 'media';
+      }
       if ($target_entity = $this->entityRepository->loadEntityByUuid($entity_type, $uuid)) {
         $valid_entities[] = $target_entity->getEntityTypeId() . "|" . $target_entity->id();
       }
