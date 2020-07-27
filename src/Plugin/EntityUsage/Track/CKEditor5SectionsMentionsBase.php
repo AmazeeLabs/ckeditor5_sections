@@ -10,27 +10,30 @@ use Drupal\Component\Utility\Html;
 abstract class CKEditor5SectionsMentionsBase extends CKEditor5SectionsBase {
 
   /**
-   * {@inheritDoc}
+   * @inheritDoc
    */
-  public function parseEntitiesFromText($text) {
-    $dom = Html::load($text);
-    $xpath = new \DOMXPath($dom);
-    $entities = [];
-    $mention_prefix = $this->getMentionPrefix();
-    foreach ($xpath->query("//span[@data-mention]") as $node) {
-      $mention = $node->getAttribute('data-mention');
-      if (strpos($mention, $mention_prefix) === 0) {
-        // The machine name of the mention we get by removing the mention
-        // prefix.
-        $machine_name = substr($mention, strlen($mention_prefix));
-        $mention_entities = $this->entityTypeManager->getStorage($this->getMentionEntityType())->loadByProperties(['machine_name' => $machine_name]);
-        if (!empty($mention_entities)) {
-          $mention_entity = reset($mention_entities);
-          $entities[$mention_entity->uuid()] = $this->getMentionEntityType();
+  protected function processSection($section) {
+    foreach ($section->getFields() as $field) {
+      if (is_string($field)) {
+        $dom = Html::load($field);
+        $xpath = new \DOMXPath($dom);
+        $entities = [];
+        $mention_prefix = $this->getMentionPrefix();
+        foreach ($xpath->query("//span[@data-mention]") as $node) {
+          $mention = $node->getAttribute('data-mention');
+          if (strpos($mention, $mention_prefix) === 0) {
+            // The machine name of the mention we get by removing the mention
+            // prefix.
+            $machine_name = substr($mention, strlen($mention_prefix));
+            $mention_entities = $this->entityTypeManager->getStorage($this->getMentionEntityType())->loadByProperties(['machine_name' => $machine_name]);
+            if (!empty($mention_entities)) {
+              $mention_entity = reset($mention_entities);
+              $this->valid_entities[] = $this->getMentionEntityType() . '|' . $mention_entity->id();
+            }
+          }
         }
       }
     }
-    return $entities;
   }
 
   /**
