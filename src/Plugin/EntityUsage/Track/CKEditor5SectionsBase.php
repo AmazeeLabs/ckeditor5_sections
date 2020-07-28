@@ -24,7 +24,9 @@ abstract class CKEditor5SectionsBase extends EntityUsageTrackBase{
 
     /* @var \Drupal\ckeditor5_sections\DocumentConverterInterface $parser */
     $sections = DocumentSection::fromValue(json_decode($text, TRUE));
-    $this->iterateSections($sections);
+    if ($sections instanceof DocumentSection) {
+      $this->iterateSections($sections);
+    }
 
     return $this->valid_entities;
   }
