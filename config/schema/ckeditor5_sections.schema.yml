@@ -15,7 +15,7 @@ field.widget.settings.sections_editor:
   label: 'Sections editor (multiple rows) display format settings'
   mapping:
     rows:
-      type: integer
+      type: string
       label: 'Rows'
     placeholder:
       type: label
