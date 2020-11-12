@@ -47,7 +47,7 @@ class DocumentSectionTypedDataBasicValidationTest extends KernelTestBase {
   /**
    * Test setup.
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installConfig(['ckeditor5_sections']);
     $this->installConfig(['ckeditor5_sections_test']);

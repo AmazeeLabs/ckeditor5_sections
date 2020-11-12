@@ -46,7 +46,7 @@ class SectionsFieldTest extends EntityKernelTestBase {
     $this->container->setParameter('ckeditor5_sections.template_directory', realpath(__DIR__ . '/assets/sections'));
   }
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('entity_test');
     $this->installConfig(['ckeditor5_sections_test']);

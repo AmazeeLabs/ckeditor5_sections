@@ -2,6 +2,8 @@
 
 namespace {
 
+  use Drupal\Tests\UnitTestCase;
+  use Drupal\ckeditor5_sections\SectionsCollector;
   if (!function_exists('file_scan_directory')) {
 
     /**
@@ -51,7 +53,7 @@ namespace Drupal\Tests\ckeditor5_sections\Unit {
     /**
      * {@inheritdoc}
      */
-    public function setUp() {
+    public function setUp(): void {
       parent::setUp();
       $this->entityTypeManager = $this->createMock('Drupal\Core\Entity\EntityTypeManagerInterface');
       $this->twigProcessor = $this->createMock('Drupal\ckeditor5_sections\TwigProcessor');

@@ -73,7 +73,7 @@ class SectionsCollector implements SectionsCollectorInterface, EventSubscriberIn
     if (!$directory) {
       $directory = drupal_get_path('module', 'ckeditor5_sections') . '/sections';
     }
-    $files = file_scan_directory($directory, '/.*.css/');
+    $files = \Drupal::service('file_system')->scanDirectory($directory, '/.*.css/');
     $styleSheets = [];
     foreach ($files as $file => $file_info) {
       $styleSheets[] = $file_info->uri;
@@ -107,7 +107,7 @@ class SectionsCollector implements SectionsCollectorInterface, EventSubscriberIn
     if ($directory === '') {
       $directory = drupal_get_path('module', 'ckeditor5_sections') . '/sections';
     }
-    $files = file_scan_directory($directory, '/.*.yml/');
+    $files = \Drupal::service('file_system')->scanDirectory($directory, '/.*.yml/');
     $sections = [];
     foreach ($files as $file => $file_info) {
       $info = Yaml::parseFile($file);
