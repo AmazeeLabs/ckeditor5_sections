@@ -3,9 +3,9 @@ description: 'Provides the Sections editor based on ckeditor5.'
 type: module
 core: 8.x
 dependencies:
-  - editor
-  - linkit (>=8.x-5.x)
-  - media_library
+  - drupal:editor
+  - linkit:linkit (>=8.x-5.x)
+  - drupal:media_library
 
 ckeditor5_sections_builds:
   - ckeditor5_sections/editor_build
