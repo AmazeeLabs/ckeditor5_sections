@@ -6,6 +6,7 @@ dependencies:
   - drupal:editor
   - linkit:linkit (>=8.x-5.x)
   - drupal:media_library
+  - drupal:ckeditor
 
 ckeditor5_sections_builds:
   - ckeditor5_sections/editor_build
