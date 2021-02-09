@@ -83,6 +83,8 @@ class CKEditor5SectionsMediaFilter extends FilterBase implements ContainerFactor
         /** @var \DOMElement $node */
         $media_uuid = $node->getAttribute('data-media-uuid');
         $display = $node->getAttribute('data-media-display');
+        $slot = $node->getAttribute('slot');
+        $mediaType = $node->getAttribute('data-media-type');
         // Clear attributes and normalize.
         $node->removeAttribute('data-media-uuid');
         $node->removeAttribute('data-media-display');
@@ -90,22 +92,30 @@ class CKEditor5SectionsMediaFilter extends FilterBase implements ContainerFactor
         if (empty($display)) {
           $display = 'default';
         }
-
-        $media = $this->entityRepository->loadEntityByUuid('media', $media_uuid);
+        $types = explode(':', $mediaType);
+        $type = reset($types);
+        if (!in_array($type, ['node', 'media'])) {
+          $type = 'media';
+        }
+        $media = $this->entityRepository->loadEntityByUuid($type, $media_uuid);
         if (!$media) {
           continue;
         }
 
-        $build = $this->entityTypeManager->getViewBuilder('media')->view($media, $display);
+        $build = $this->entityTypeManager->getViewBuilder($type)->view($media, $display);
         $rendered = $this->renderer->render($build);
         $updated_nodes = Html::load($rendered)->getElementsByTagName('body')
           ->item(0)
           ->childNodes;
+        // Create a wrapper and add slot attribute.
+        $wrapper = $document->createElement('div');
+        $wrapper->setAttribute('slot', $slot);
+        $wrapperNode = $node->parentNode->insertBefore($wrapper, $node);
 
         // Insert rendered media into the element.
         foreach ($updated_nodes as $updated_node) {
           $updated_node = $document->importNode($updated_node, TRUE);
-          $node->parentNode->insertBefore($updated_node, $node);
+          $wrapperNode->appendChild($updated_node);
         }
         $node->parentNode->removeChild($node);
       }
