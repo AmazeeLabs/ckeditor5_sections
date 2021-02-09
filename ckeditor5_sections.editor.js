@@ -131,7 +131,7 @@
       var selectedType = '';
 
       if (type === 'media') {
-        var path = (operation === 'add') ? 'sections/dialog?upload_form=1' : 'sections/dialog?upload_form=0';
+        var path = (operation === 'add') ? 'admin/content/media-widget?upload_form=1&entity_type=' + type : 'admin/content/media-widget?upload_form=0&entity_type=' + type;
 
         // Filter allowed media types.
         if (typeof bundle != 'undefined') {
@@ -144,7 +144,7 @@
         }
 
         Drupal.ajax({
-          url: Drupal.url(path + '&field_id=' + $(element).attr('id') + typeFilter + '&media_library_selected_type=' + selectedType + '&media_library_remaining=1'),
+          url: Drupal.url(path + '&field_id=' + $(element).attr('id') + typeFilter + '&media_library_selected_type=' + selectedType + '&media_library_remaining=1&entity_type=' + type),
           dialogType: 'modal',
           dialog: {
             dialogClass: 'media-library-widget-modal',
@@ -168,7 +168,7 @@
         }
 
         Drupal.ajax({
-          url: Drupal.url('admin/content/content-widget?field_id=' + $(element).attr('id') + '&content_library_widget_id=' + $(element).attr('id') + typeFilter + '&media_library_selected_type=' + selectedType + '&media_library_remaining=1' ),
+          url: Drupal.url('admin/content/content-widget?field_id=' + $(element).attr('id') + '&content_library_widget_id=' + $(element).attr('id') + typeFilter + '&media_library_selected_type=' + selectedType + '&media_library_remaining=1&entity_type=' + type ),
           dialogType: 'modal',
           dialog: {
             dialogClass: 'media-library-widget-modal',

@@ -53,6 +53,11 @@ function ckeditor5_sections_views_data_alter(&$data) {
   $data['node_field_data']['node_library_select_form'] = $data['media']['media_library_select_form'];
   $data['node_field_data']['node_library_select_form']['title'] = t('Select Node');
   $data['node_field_data']['node_library_select_form']['real field'] = 'nid';
+
+  // @TODO get all search api related view data keys, this only works for index named content_listing.
+  $data['search_api_index_content_listing']['media_library_select_form']['field']['id'] = 'sections_media_library_select_form';
+  $data['search_api_index_content_listing']['media_library_select_form']['title'] = t('Select Node');
+  $data['search_api_index_content_listing']['media_library_select_form']['real field'] = 'id';
 }
 
 /**
