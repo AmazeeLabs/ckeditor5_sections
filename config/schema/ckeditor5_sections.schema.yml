@@ -10,6 +10,17 @@ field.field_settings.sections:
       type: string
       label: 'JSON filter format'
 
+field.widget.settings.sections_editor:
+  type: mapping
+  label: 'Sections editor (multiple rows) display format settings'
+  mapping:
+    rows:
+      type: string
+      label: 'Rows'
+    placeholder:
+      type: label
+      label: 'Placeholder'
+
 editor.settings.ckeditor5_sections:
   type: mapping
   label: 'CKEditor5 Sections settings'

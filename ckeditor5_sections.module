@@ -20,7 +20,9 @@ function ckeditor5_sections_library_info_alter(&$libraries, $extension) {
     $stylesheets = $collector->getStyleSheets();
     foreach ($stylesheets as $stylesheet) {
       $fileSystem = new Filesystem();
-      $relative = $fileSystem->makePathRelative(dirname($stylesheet), drupal_get_path('module', 'ckeditor5_sections')) . basename($stylesheet);
+      $start_path = DRUPAL_ROOT . '/' . dirname($stylesheet);
+      $end_path = DRUPAL_ROOT . '/' . drupal_get_path('module', 'ckeditor5_sections');
+      $relative = $fileSystem->makePathRelative($start_path, $end_path) . basename($stylesheet);
       $libraries['sections']['css']['base'][$relative] = [];
     }
     // Add CKEditor5 inspector if enabled in e.g. development.settings.yml.
