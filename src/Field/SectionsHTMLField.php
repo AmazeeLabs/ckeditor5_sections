@@ -16,9 +16,9 @@ class SectionsHTMLField extends TypedData {
     $item = $this->getParent();
     // Check temporary storage for a merge result string.
     // TODO: Move document merge to json.
-    if ($item->mergeResult) {
-      return $item->mergeResult;
-    }
+    //if ($item->mergeResult) {
+      //return $item->mergeResult;
+    //}
 
     $data = $item->sections;
 
