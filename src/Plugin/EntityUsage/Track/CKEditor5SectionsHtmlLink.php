@@ -7,6 +7,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\Core\StreamWrapper\StreamWrapperInterface;
 use Drupal\entity_usage\EntityUsage;
@@ -92,68 +93,44 @@ class CKEditor5SectionsHtmlLink extends CKEditor5SectionsBase {
   }
 
   /**
-   * {@inheritdoc}
+   * @inheritDoc
    */
-  public function parseEntitiesFromText($text) {
-    $dom = Html::load($text);
-    $xpath = new \DOMXPath($dom);
-    $entities = [];
-
-    // Loop trough all the <a> elements.
-    $xpath_query = "//a[@href != '']";
-    foreach ($xpath->query($xpath_query) as $element) {
-      /** @var \DOMElement $element */
-      try {
-        // Get the href value of the <a> element.
-        $href = $element->getAttribute('href');
-
-        // Strip off the scheme and host, so we only get the path.
-        $site_domains = $this->config->get('site_domains') ?: [];
-        foreach ($site_domains as $site_domain) {
-          $host_pattern = '{^https?://' . str_replace('.', '\.', $site_domain) . '/}';
-          if (\preg_match($host_pattern, $href)) {
-            $href = preg_replace($host_pattern, '/', $href);
-            break;
-          }
-        }
-
-        $target_type = $target_id = NULL;
-
-        // Check if the href links to an entity.
-        $url = $this->pathValidator->getUrlIfValidWithoutAccessCheck($href);
-        if ($url && $url->isRouted() && preg_match('/^entity\./', $url->getRouteName())) {
-          // Ge the target entity type and ID.
-          $route_parameters = $url->getRouteParameters();
-          $target_type = array_keys($route_parameters)[0];
-          $target_id = $route_parameters[$target_type];
-        }
-        elseif (\preg_match('{^/?' . $this->publicFileDirectory . '/}', $href)) {
-          // Check if we can map the link to a public file.
-          $file_uri = preg_replace('{^/?' . $this->publicFileDirectory . '/}', 'public://', urldecode($href));
-          $files = $this->entityTypeManager->getStorage('file')->loadByProperties(['uri' => $file_uri]);
-          if ($files) {
-            // File entity found.
-            $target_type = 'file';
-            $target_id = array_keys($files)[0];
-          }
-        }
-
-        if ($target_type && $target_id) {
-          $entity = $this->entityTypeManager->getStorage($target_type)->load($target_id);
-          if ($entity) {
-            // No matter if this entity was referenced with linkit or not, we
-            // just added to the entities list. The html_link plugin
-            // ignores them because it has a separate plugin just for that.
-            $entities[$entity->uuid()] = $target_type;
-          }
+  protected function processSection($section) {
+    if ($href = $section->get('href')) {
+      // Strip off the scheme and host, so we only get the path.
+      $site_domains = $this->config->get('site_domains') ?: [];
+      foreach ($site_domains as $site_domain) {
+        $host_pattern = '{^https?://' . str_replace('.', '\.', $site_domain) . '/}';
+        if (\preg_match($host_pattern, $href)) {
+          $href = preg_replace($host_pattern, '/', $href);
+          break;
         }
       }
-      catch (\Exception $e) {
-        // Do nothing.
+
+      $target_type = $target_id = NULL;
+
+      // Check if the href links to an entity.
+      $url = $this->pathValidator->getUrlIfValidWithoutAccessCheck($href);
+      if ($url && $url->isRouted() && preg_match('/^entity\./', $url->getRouteName())) {
+        // Ge the target entity type and ID.
+        $route_parameters = $url->getRouteParameters();
+        $target_type = array_keys($route_parameters)[0];
+        $target_id = $route_parameters[$target_type];
+      } elseif (\preg_match('{^/?' . $this->publicFileDirectory . '/}', $href)) {
+        // Check if we can map the link to a public file.
+        $file_uri = preg_replace('{^/?' . $this->publicFileDirectory . '/}', 'public://', urldecode($href));
+        $files = $this->entityTypeManager->getStorage('file')->loadByProperties(['uri' => $file_uri]);
+        if ($files) {
+          // File entity found.
+          $target_type = 'file';
+          $target_id = array_keys($files)[0];
+        }
+      }
+
+      if ($target_type && $target_id) {
+        $this->valid_entities[] = $target_type . "|" . $target_id;
       }
     }
-
-    return $entities;
   }
 
 }

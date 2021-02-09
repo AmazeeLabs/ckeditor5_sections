@@ -3,6 +3,7 @@
 namespace Drupal\ckeditor5_sections\Plugin\EntityUsage\Track;
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Field\FieldItemInterface;
 
 /**
  * Tracks usage of media in sections fields.
@@ -17,29 +18,24 @@ use Drupal\Component\Utility\Html;
 class CKEditor5SectionsMedia extends CKEditor5SectionsBase {
 
   /**
-   * {@inheritdoc}
+   * @inheritDoc
    */
-  public function parseEntitiesFromText($text) {
-    $dom = Html::load($text);
-    $xpath = new \DOMXPath($dom);
-    $entities = [];
-    foreach ($xpath->query('//ck-media[@data-media-uuid]') as $node) {
-      // By default, the media widget references media entities. However, it is
-      // possible that it references other entity types as well. This is stored
-      // in the 'data-media-type' attribute, so we have to parse it and see if
-      // we do actually reference a media or some other entity type. The pattern
-      // of the 'data-media-type' is: "entity_type:entity_bundle".
-      // @todo: this ck-media element should probably be refactored and renamed
-      // to something like 'ck-entity'.
-      $enity_type = 'media';
-      $media_type_attribute = $node->getAttribute('data-media-type');
-      if (!empty($media_type_attribute)) {
-        $words = explode(':', $media_type_attribute);
-        $enity_type = $words[0];
+  protected function processSection($section) {
+    $type = $section->get('data-media-type');
+    $uuid = $section->get('data-media-uuid');
+    if ($type && $uuid) {
+      $entityType = explode(':', $type)[0];
+      /** @var \Drupal\Core\Entity\EntityTypeManager $entityTypeManager */
+      $entityTypeManager = \Drupal::service('entity_type.manager');
+      $definitions = $entityTypeManager->getDefinitions();
+      if (empty($definitions[$entityType])) {
+        $entityType = 'media';
       }
-      $entities[$node->getAttribute('data-media-uuid')] = $enity_type;
+      $entity_id = $this->getIdByUuid($entityType, $uuid, false);
+      if ($entity_id) {
+        $this->valid_entities[] = $entityType . "|" . $entity_id;
+      }
     }
-    return $entities;
   }
 
 }

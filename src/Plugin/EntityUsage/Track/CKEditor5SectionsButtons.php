@@ -7,6 +7,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\entity_usage\EntityUsage;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -75,14 +76,10 @@ class CKEditor5SectionsButtons extends CKEditor5SectionsBase {
   }
 
   /**
-   * {@inheritdoc}
+   * @inheritDoc
    */
-  public function parseEntitiesFromText($text) {
-    $dom = Html::load($text);
-    $xpath = new \DOMXPath($dom);
-    $entities = [];
-    foreach ($xpath->query('//ck-button') as $node) {
-      $link_target = $node->getAttribute('link-target');
+  protected function processSection($section) {
+    if ($link_target = $section->get('link-target')) {
       $target_type = $target_id = NULL;
 
       // Check if the target links to an entity.
@@ -95,17 +92,12 @@ class CKEditor5SectionsButtons extends CKEditor5SectionsBase {
           $target_id = $route_parameters[$target_type];
         }
         if ($target_type && $target_id) {
-          $entity = $this->entityTypeManager->getStorage($target_type)->load($target_id);
-          if ($entity) {
-            $entities[$entity->uuid()] = $target_type;
-          }
+          $this->valid_entities[] = $target_type . '|' . $target_id;
         }
-      }
-      catch (\Exception $e) {
+      } catch (\Exception $e) {
         // Do nothing.
       }
     }
-    return $entities;
   }
 
 }
