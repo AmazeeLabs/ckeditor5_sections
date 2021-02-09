@@ -1,2 +1,3 @@
 permission_callbacks:
   - \Drupal\ckeditor5_sections\MentionProviderPermissions::permissions
+  - \Drupal\ckeditor5_sections\SectionsPermissions::permissions

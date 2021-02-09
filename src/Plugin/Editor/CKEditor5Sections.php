@@ -5,6 +5,7 @@ namespace Drupal\ckeditor5_sections\Plugin\Editor;
 use Drupal\ckeditor5_sections\SectionsCollectorInterface;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Console\Bootstrap\Drupal;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -255,7 +256,21 @@ class CKEditor5Sections extends EditorBase implements ContainerFactoryPluginInte
    */
   public function getJSSettings(Editor $editor) {
     $settings = $editor->getSettings();
+    // Get the current sections and remove the ones which the current user does
+    // not have access to. To remove them, we only delete the label and the
+    // icons, as these sections are referenced in the templates (which can be
+    // simple html files), so if we remove them for real, then we can a js
+    // error.
     $sections = $this->sectionsCollector->getSections();
+    $currentUser = \Drupal::currentUser();
+    foreach ($sections as $id => $section) {
+      if (!$currentUser->hasPermission('use ' . $id . ' ckeditor section')) {
+        $sections[$id]['label'] = '';
+        $sections[$id]['icon'] = '';
+        // The scg icon has to be a space, otherwise the default will be used.
+        $sections[$id]['svgIcon'] = ' ';
+      }
+    }
 
     /** @var \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler */
     $moduleHandler = \Drupal::service('module_handler');
