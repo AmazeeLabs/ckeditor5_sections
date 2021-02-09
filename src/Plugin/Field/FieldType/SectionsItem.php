@@ -2,6 +2,7 @@
 
 namespace Drupal\ckeditor5_sections\Plugin\Field\FieldType;
 
+use Drupal\ckeditor5_sections\DocumentSection;
 use Drupal\ckeditor5_sections\Field\SectionsDataField;
 use Drupal\ckeditor5_sections\Field\SectionsHTMLField;
 use Drupal\ckeditor5_sections\Field\SectionsProcessedDataField;
@@ -128,6 +129,16 @@ class SectionsItem extends FieldItemBase {
   public function setValue($values, $notify = TRUE) {
     if (isset($this->properties['json'])) {
       unset($this->properties['json']);
+    }
+    if (!empty($values['json'])) {
+      /* @var \Drupal\ckeditor5_sections\DocumentConverterInterface $parser */
+      $sections = DocumentSection::fromValue(json_decode($values['json'], TRUE));
+
+      // Invoke alter hooks before returning data.
+      if ($sections) {
+        \Drupal::moduleHandler()->alter('section_data', $sections, $item);
+      }
+      $values['json'] = json_encode($sections->getValue());
     }
     parent::setValue($values, $notify);
   }
