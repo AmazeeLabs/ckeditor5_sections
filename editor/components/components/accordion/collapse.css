@@ -66,6 +66,7 @@
 }
 
 .ck-collapse.open .ck-collapse__body {
+  display: unset;
   max-height: 1000px;
   opacity: 1;
   visibility: visible;
