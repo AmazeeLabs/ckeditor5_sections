@@ -158,6 +158,52 @@ function ckeditor5_sections_attach_entities(DocumentSection $section) {
 }
 
 /**
+ * Implements hook_delivery_cart_referenced_content().
+ */
+function ckeditor5_sections_delivery_cart_referenced_content(Drupal\Core\Entity\EntityInterface $entity) {
+  // Extract all fields and look for the ones using sections.
+  $fields = $entity->getFieldDefinitions();
+  if (!empty($fields)) {
+    foreach ($fields as $field) {
+      $type = $field->getType();
+      if ($type === "sections") {
+        $name = $field->getName();
+        // If we find any using sections extract the data and look for media to add to delivery.
+        if ($entity->hasField($name)) {
+          $field = $entity->get($name)->getValue();
+
+          foreach ($field as $data) {
+            if (!isset($data['json'])) {
+              break;
+            }
+            $json = $data['json'];
+            // extract the media uuid from the json
+            preg_match_all('("data-media-uuid":"(.*?)",)', $json, $mediaUuids);
+
+            if (!empty($mediaUuids) && isset($mediaUuids[1])) {
+              foreach ($mediaUuids[1] as $uuid) {
+                try {
+                  $mediaByUuid = \Drupal::entityTypeManager()
+                    ->getStorage('media')
+                    ->loadByProperties(['uuid' => $uuid]);
+                } catch (Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException | Drupal\Component\Plugin\Exception\PluginNotFoundException $e) {
+                  break;
+                }
+                $mediaEntity = reset($mediaByUuid);
+                if($mediaEntity) {
+                  \Drupal::service('delivery.cart')->addToCart($mediaEntity);
+                }
+              }
+            }
+          }
+        }
+
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_form_FORM_ID_alter() for the link editor.
  */
 function ckeditor5_sections_form_editor_link_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
