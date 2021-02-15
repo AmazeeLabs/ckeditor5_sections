@@ -161,28 +161,18 @@ function ckeditor5_sections_attach_entities(DocumentSection $section) {
  * Implements hook_delivery_cart_referenced_content().
  */
 function ckeditor5_sections_delivery_cart_referenced_content(Drupal\Core\Entity\EntityInterface $entity) {
-  if ($entity->getEntityTypeId() === "node") {
-
-    // Extract all fields and look for the ones using sections.
-    $fieldsWithSections = [];
-    $fields = $entity->getFieldDefinitions();
-    if (!empty($fields)) {
-      foreach ($fields as $field) {
-        $type = $field->getType();
-        if ($type === "sections") {
-          $fieldsWithSections[$field->getName()] = $field->getName();
-        }
-      }
-    }
-
-    // If we find any using sections extract the data and look for media to add to delivery.
-    if (!empty($fieldsWithSections)) {
-      foreach ($fieldsWithSections as $name) {
+  // Extract all fields and look for the ones using sections.
+  $fields = $entity->getFieldDefinitions();
+  if (!empty($fields)) {
+    foreach ($fields as $field) {
+      $type = $field->getType();
+      if ($type === "sections") {
+        $name = $field->getName();
+        // If we find any using sections extract the data and look for media to add to delivery.
         if ($entity->hasField($name)) {
           $field = $entity->get($name)->getValue();
 
           foreach ($field as $data) {
-
             if (!isset($data['json'])) {
               break;
             }
@@ -207,6 +197,7 @@ function ckeditor5_sections_delivery_cart_referenced_content(Drupal\Core\Entity\
             }
           }
         }
+
       }
     }
   }
