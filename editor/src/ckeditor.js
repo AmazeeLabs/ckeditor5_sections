@@ -12,7 +12,7 @@ import BlockQuote from '@ckeditor/ckeditor5-block-quote/src/blockquote';
 import Heading from '@ckeditor/ckeditor5-heading/src/heading';
 import List from '@ckeditor/ckeditor5-list/src/list';
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
-import Table from '@ckeditor/ckeditor5-table/src/table';
+//import Table from '@ckeditor/ckeditor5-table/src/table';
 import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
 import BlockToolbar from '@ckeditor/ckeditor5-ui/src/toolbar/block/blocktoolbar';
 import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefromoffice';
@@ -24,6 +24,7 @@ import TemplateEditing from '../packages/ckeditor5-template/src/templateediting'
 import RemoteControl from '../packages/ckeditor5-template/src/remotecontrol';
 import MergeEditing from "../packages/ckeditor5-template/src/mergeediting";
 import Linkit from "../packages/ckeditor5-linkit/src/linkit";
+import CustomTable from "../packages/ckeditor5-customtable/src/customtable";
 
 export default class SectionsEditor extends BalloonEditorBase { }
 
@@ -43,7 +44,7 @@ SectionsEditor.builtinPlugins = [
 	Heading,
 	List,
 	Paragraph,
-	Table,
+  	CustomTable,
 	TableToolbar,
 	BlockToolbar,
 	Template,
